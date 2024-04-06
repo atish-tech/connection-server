@@ -1,44 +1,40 @@
-"use client"
-import { DB } from "@/lib/prisma";
+"use client";
+import { useParams, useRouter } from "next/navigation";
+import { CustomToltip } from "../custom-component/tooltip";
 import { ScrollArea } from "../ui/scroll-area";
-import { useUserModel } from "@/hooks/main-store";
-import { useEffect, useState } from "react";
-// import { PrismaClient } from "@prisma/client";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-export const ServerList = ({ userId }: { userId: string }) => {
-  // const DB = new PrismaClient();
-  const { data, setUserModel } = useUserModel();
-  const [serverData , setServerData] = useState(null);
+export const ServerList = ({ server }: { server: any }) => {
+  const navigate = useRouter();
+  const params = useParams();
 
-  if (data?.isVerified === false && typeof window !== "undefined") {
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-    
-    setUserModel(userData);
-  }
-
-  if(!data) return null;
-
-  const getServer = async() => {
-    try {
-      const server = await DB.user.findFirst({
-        where : {
-          id : "10713cc4-6bbd-4017-9cea-77dab2ba8ac9"
-        }
-      });
-
-      
-
-    } catch (error) {
-      console.log(error);
-      
-    }
-  }
-
-  useEffect(() => {
-    getServer();
-  } , []);
-    
-  return <ScrollArea>
-
-  </ScrollArea>;
+  return (
+    <ScrollArea>
+      {server.map((server: any) => (
+        <div
+          key={server.id}
+          onClick={() => navigate.push(`/servers/${server.id}`)}
+          className={`flex items-center gap-2 p-2 rounded-md mt-2 hover:bg-zinc-700 ${
+            server.id === params?.serverId ? "bg-zinc-600" : ""
+          }`}
+        >
+          <CustomToltip
+            component={
+              <img
+                src={server.imageUrl}
+                className="h-8 w-8 rounded-md"
+                alt="server"
+              />
+            }
+            message={server.name}
+          />
+        </div>
+      ))}
+    </ScrollArea>
+  );
 };

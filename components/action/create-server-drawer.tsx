@@ -7,8 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UploadButton } from "@/lib/utils";
-import { PlusCircleIcon } from "lucide-react";
+import { Loader, PlusCircleIcon } from "lucide-react";
 import { UploadImage } from "./upload-image";
 import { useState } from "react";
 import { Input } from "../ui/input";
@@ -16,15 +15,21 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { z } from "zod";
 import axios from "axios";
+import { useDrawerAction } from "@/hooks/use-drawer-action";
+import { useRouter } from "next/navigation";
 
 const CreateServerSchema = z.object({
   imageUrl: z.string().min(10, { message: "Please provide an image" }),
   serverName: z.string().min(2, { message: "Please provide a server name" }),
 });
 
-export const CreateServer = () => {
+export const CreateServerDrawer = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [serverName, setServerName] = useState<string | null>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+  const { isOpen, onClose, type } = useDrawerAction();
+  const drawerOpen = isOpen && type === "createServer";
 
   const createServer = async () => {
     // Validate input
@@ -33,20 +38,23 @@ export const CreateServer = () => {
 
     // Create server logic here
     try {
-      const server = await axios.post("/api/server", { imageUrl, name : serverName });
-      console.log(server.data);
+      setLoading(true);
+      const server = await axios.post("/api/server", {
+        imageUrl,
+        name: serverName,
+      });
+      router.refresh();
     } catch (error) {
       console.log(error);
-      toast.error("Somthing went wrong!");
+      toast.error("Somthing went wrong! Try Again.");
+    } finally {
+      setLoading(false);
+      onClose();
     }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <PlusCircleIcon className="h-12 w-12" />
-      </DialogTrigger>
-
+    <Dialog open={drawerOpen} onOpenChange={() => onClose()}>
       <DialogContent className="bg-zinc-800 text-white border-none">
         {/* title */}
         <DialogHeader>
@@ -67,8 +75,12 @@ export const CreateServer = () => {
         />
 
         {/* Create Server */}
-        <Button onClick={createServer} className="bg-green-500">
-          Create Server
+        <Button
+          disabled={loading}
+          onClick={createServer}
+          className="bg-green-600 hover:bg-green-500"
+        >
+          {loading ? <Loader className="animate-spin" /> : "Create Server"}
         </Button>
       </DialogContent>
     </Dialog>
