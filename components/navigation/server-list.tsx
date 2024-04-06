@@ -5,7 +5,7 @@ import { useUserModel } from "@/hooks/main-store";
 import { useEffect, useState } from "react";
 // import { PrismaClient } from "@prisma/client";
 
-export const ServerList = () => {
+export const ServerList = ({ userId }: { userId: string }) => {
   // const DB = new PrismaClient();
   const { data, setUserModel } = useUserModel();
   const [serverData , setServerData] = useState(null);
@@ -26,7 +26,6 @@ export const ServerList = () => {
         }
       });
 
-      console.log(server);
       
 
     } catch (error) {
