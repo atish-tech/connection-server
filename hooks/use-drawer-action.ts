@@ -1,16 +1,27 @@
+import { Channel, ChannelType, Member, Server } from "@prisma/client";
 import { create } from "zustand";
 
-export type DrawerActionType = "createServer";
+export type DrawerActionType = "createServer" | "createChannel" | "invitePeople" | "serverMembers" | "editServer" | "deleteServer";
+
+interface Data {
+    server?: Server | null;
+    channel?: Channel;
+    channelType?: ChannelType;
+    member?: Member[];
+    id?: any;
+}
 
 interface DrawerAction {
     isOpen: boolean;
     type: DrawerActionType | null;
-    onOpen: (type: DrawerActionType) => void;
+    data?: Data,
+    onOpen: (type: DrawerActionType , data?:Data) => void;
     onClose: () => void;
 }
 export const useDrawerAction = create<DrawerAction>((set) => ({
     isOpen: false,
     type: null,
-    onOpen: (type: DrawerActionType) => set({ isOpen: true, type }),
+    data: {}, // Provide an initializer for the 'data' property
+    onOpen: (type: DrawerActionType , data={}) => set({ isOpen: true, type, data }), // Add initializer for 'data'
     onClose: () => set({ isOpen: false, type: null }),
 }));

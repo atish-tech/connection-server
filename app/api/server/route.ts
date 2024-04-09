@@ -115,7 +115,6 @@ export async function DELETE(req: Request) {
 
         const crediencial = new URL(req.url);
         const serverId = crediencial.searchParams.get("serverId") || "";
-        console.log(serverId);
         
         await DB.server.delete({
             where: {

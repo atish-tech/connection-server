@@ -7,6 +7,7 @@ import { decodeToken } from "@/config/decodeToken";
 import { DB } from "@/lib/prisma";
 import { CustomToltip } from "../custom-component/tooltip";
 import { CreateServer } from "./create-server";
+import { UserHoverCart } from "./user-cart-hover";
 
 export const Navigation = async () => {
   const token = cookies().get("token")?.value || " ";
@@ -55,8 +56,8 @@ export const Navigation = async () => {
       {/* Server */}
       <ServerList server={server} />
 
-User Profile
-    
+      {/* User Profile */}
+      <UserHoverCart user={user} />
     </div>
   );
 };

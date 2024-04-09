@@ -6,8 +6,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface UploadImageProps {
-  setImageUrl: (url: string | null) => void;
-  imageUrl: string | null;
+  setImageUrl: (url: string | undefined) => void;
+  imageUrl: string | undefined;
 }
 
 export function UploadImage({ setImageUrl, imageUrl }: UploadImageProps) {
@@ -17,10 +17,10 @@ export function UploadImage({ setImageUrl, imageUrl }: UploadImageProps) {
   return (
     <main className="w-full flex items-center justify-center flex-col gap-3">
       {/* Uploaded image preview */}
-      {fileType !== "pdf" && imageUrl !== null && (
+      {fileType !== "pdf" && imageUrl !== undefined && imageUrl !== null && (
         <div className="w-[100px] h-[100px] relative flex items-center justify-center rounded-full ">
           <button
-            onClick={() => setImageUrl(null)}
+            onClick={() => setImageUrl(undefined)}
             type="button"
             className="bg-red-400 text-white p-1 rounded-full absolute top-0 right-0 shadow-sm"
           >

@@ -49,6 +49,133 @@ export async function POST(req: Request) {
     }
 }
 
+
+export async function PUT(req: Request) {
+    try {
+
+        const token = cookies().get("token")?.value || " ";
+
+        if (!token) return new NextResponse("Bad Request", { status: StatusCode.BadRequest });
+
+        const email = await decodeToken(token);
+
+        const body = await req.json();
+
+        const user = await DB.user.findFirst({ where: { email } });
+
+        // Validate User
+        if (!user) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        // validate body
+        // const verifiedBody = ChannelInputSchema.safeParse(body);
+        // if (!verifiedBody.success) {
+        //     return new NextResponse(verifiedBody.error.errors[0].message, { status: StatusCode.BadRequest });
+        // }
+
+        const { serverId, memberId, role } = body;
+
+        const server = await DB.server.update({
+            where: {
+                id: serverId,
+                adminId: user.id,
+            },
+            data: {
+                members: {
+                    update: {
+                        where: {
+                            id: memberId,
+                            userId: {
+                                not: user.id
+                            }
+                        },
+                        data: {
+                            role
+                        }
+                    }
+                }
+            },
+            include: {
+                members: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        });
+
+
+
+        return NextResponse.json(server.members, { status: StatusCode.Success });
+    } catch (error) {
+        console.log(error);
+        return new NextResponse("Server Error", { status: StatusCode.Error });
+    }
+}
+
+
+export async function DELETE(req: Request) {
+    try {
+
+        const token = cookies().get("token")?.value || " ";
+
+        if (!token) return new NextResponse("Bad Request", { status: StatusCode.BadRequest });
+
+        const email = await decodeToken(token);
+
+        const body = await req.json();
+
+        const user = await DB.user.findFirst({ where: { email } });
+
+        // Validate User
+        if (!user) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        // validate body
+        // const verifiedBody = ChannelInputSchema.safeParse(body);
+        // if (!verifiedBody.success) {
+        //     return new NextResponse(verifiedBody.error.errors[0].message, { status: StatusCode.BadRequest });
+        // }
+
+        const { serverId, memberId, role } = body;
+
+        const server = await DB.server.update({
+            where: {
+                id: serverId,
+                adminId: user.id,
+            },
+            data: {
+                members: {
+                    delete: {
+                        id: memberId,
+                        userId: {
+                            not: user.id
+                        }
+                    }
+                }
+            },
+            include: {
+                members: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        });
+
+        
+
+
+
+        return NextResponse.json(server.members, { status: StatusCode.Success });
+    } catch (error) {
+        console.log(error);
+        return new NextResponse("Server Error", { status: StatusCode.Error });
+    }
+}
+
 export async function GET(req: Request) {
     try {
         const token = cookies().get("token")?.value || " ";
@@ -67,12 +194,12 @@ export async function GET(req: Request) {
         const crediencial = new URL(req.url);
         const serverId = crediencial.searchParams.get("serverId") || "";
 
-        const member = await DB.server.findFirst({
+        const member = await DB.member.findMany({
             where: {
-                id: serverId,
+                serverId
             },
             include: {
-                members: true
+                user: true
             }
         })
 

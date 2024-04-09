@@ -7,7 +7,7 @@ const MainLayout = ({children} : {children : React.ReactNode}) => {
             <div>
                 <Navigation />
             </div>
-            <main>
+            <main className="w-full">
                 {children}
             </main>
         </div>
