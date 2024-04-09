@@ -13,8 +13,6 @@ export async function POST(req: Request) {
 
         const email = await decodeToken(token);
 
-        const body = await req.json();
-
         const user = await DB.user.findFirst({ where: { email } });
 
         // Validate User
@@ -28,7 +26,12 @@ export async function POST(req: Request) {
 
         const messages = await DB.channelMessage.findMany({
             where: { channelId },
-            orderBy: { createdAt: "asc" }
+            orderBy: { createdAt: "asc" },
+            include: {
+                members: {
+                    include: { user: true }
+                }
+            },
         });
 
         return NextResponse.json(messages);

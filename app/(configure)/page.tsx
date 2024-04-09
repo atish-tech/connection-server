@@ -21,7 +21,7 @@ export default async function Home() {
   if (!user) return redirect("/login");
 
   // find first server
-  const server: any = await DB.server.findFirst({
+  const server = await DB.server.findFirst({
     where: {
       members: {
         some: {
@@ -35,13 +35,14 @@ export default async function Home() {
       imageUrl: true,
       adminId: true,
       members: true,
+      channels: true
     },
   });
 
   // find first server and redirect to first server
   // &
   // set user data into localstorage
-  if (server) return <InitilizedUser user={user} serverId={server.id} />;
+  if (server) return <InitilizedUser channelName={server.channels[0].name} user={user} channelId={server.channels[0].id} serverId={server.id}  />;
   
   // if user is not a member of any server
   else return redirect("/servers/availible");
