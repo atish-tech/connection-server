@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function({children} : {
+function Auth({children} : {
     children : React.ReactNode
 }) {
     return (
@@ -8,4 +8,6 @@ export default function({children} : {
             {children}
         </div>
     )
-}
+};
+
+export default Auth

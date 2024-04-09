@@ -18,7 +18,7 @@ const inputSchema = z.object({
     .min(4, { message: "Password must be at list 4 charecter long" }),
 });
 
-export default function () {
+function Login () {
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -112,3 +112,5 @@ export default function () {
     </div>
   );
 }
+
+export default Login

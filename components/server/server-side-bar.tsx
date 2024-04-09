@@ -62,7 +62,9 @@ export const ServerSideBar = async ({ serverId }: { serverId: string }) => {
 
       {/* Text Channel */}
       {textChannel?.map((channel) => (
-        <TextChannel channel={channel} />
+       <div className="w-full h-full " key={channel.id}>
+         <TextChannel channel={channel} />
+        </div>
       ))}
     </div>
   );
