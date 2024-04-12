@@ -55,6 +55,10 @@ export const ServerSideBar = async ({ serverId }: { serverId: string }) => {
     (f) => f.type === ChannelType.VIDEO
   );
 
+  console.log(textChannel);
+ 
+  
+
   return (
     <div className="h-full w-full">
       {/* Header */}
@@ -63,7 +67,8 @@ export const ServerSideBar = async ({ serverId }: { serverId: string }) => {
       {/* Text Channel */}
       {textChannel?.map((channel) => (
        <div className="w-full h-full " key={channel.id}>
-         <TextChannel channel={channel} />
+         {/* <TextChannel channel={channel} /> */}
+         <p>{channel.name}</p>
         </div>
       ))}
     </div>
