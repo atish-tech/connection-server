@@ -5,14 +5,17 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Delete, DeleteIcon, Edit, Group, LucideDelete, PlusCircle, Trash, UserPlus2, UsersRound } from "lucide-react";
+import {
+  ChevronDown,
+  Edit,
+  PlusCircle,
+  Trash,
+  UserPlus2,
+  UsersRound,
+} from "lucide-react";
 import { Member, Server } from "@prisma/client";
-import axios from "axios"
-import { useEffect, useState } from "react";
 
 interface ServerHeaderProps {
   serverId: string;
@@ -27,15 +30,15 @@ export const ServerHeader = ({
   serverName,
   inviteCode,
   serverMember,
-  server
+  server,
 }: ServerHeaderProps) => {
   const { onOpen } = useDrawerAction();
-  
+
   return (
     <div className="w-full">
       <DropdownMenu>
-        <DropdownMenuTrigger className="w-full h-10 focus:outline-none bg-zinc-700/10 hover:bg-zinc-700/55">
-          {serverName}{" "}
+        <DropdownMenuTrigger className="w-full flex items-center justify-between px-5 h-10 focus:outline-none bg-zinc-700/10 hover:bg-zinc-700/55">
+          {serverName} <ChevronDown />
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-[100%] border-none bg-zinc-800">
@@ -65,7 +68,7 @@ export const ServerHeader = ({
           <DropdownMenuItem
             className="bg-zinc-800/60 cursor-pointer text-white min-w-[250px] hover:bg-zinc-700"
             onClick={() => {
-              onOpen("serverMembers", { member : serverMember });
+              onOpen("serverMembers", { member: serverMember });
             }}
           >
             Members
@@ -93,8 +96,6 @@ export const ServerHeader = ({
             Delete Server
             <Trash className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
-
-
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

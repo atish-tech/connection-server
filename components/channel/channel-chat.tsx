@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import { ChannelMessage } from "@prisma/client";
 import { MoreHorizontal, MoreVertical, User } from "lucide-react";
 
-export const ChannelChat = ({ channelId }: { channelId: number }) => {
-  const [data, setData] = useState([]);
+export const ChannelChat = ({ channelId , data , setData}:
+   { channelId: number , data:any , setData: any }) => {
+  
   const getMessage = async () => {
     try {
       const response = await axios.post(
@@ -32,10 +33,10 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
             <div key={m.id} className="flex items-center gap-3 w-full">
               <User />
               <div>
-                <p className="text-zinc-400">{m.members.user.userName} </p>
+                {/* <p className="text-zinc-400">{m.members.user.userName} </p> */}
                 <p>{m.content} </p>
               </div>
-              <p>{m.createdAt} </p>
+              {/* <p>{m.createdAt} </p> */}
 
               <MoreVertical className="ml-auto" />
             </div>

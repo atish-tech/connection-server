@@ -1,12 +1,13 @@
 import { decodeToken } from "@/config/decodeToken";
 import { DB } from "@/lib/prisma";
-import { ChannelType } from "@prisma/client";
+import { Channel, ChannelType, User } from "@prisma/client";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ServerHeader } from "./server-header";
 import { TextChannel } from "./text-channel";
-
-
+import { AudioChannel } from "./audio-channel";
+import { VideoChannel } from "./video-channel";
+import { Separator } from "../ui/separator";
 
 export const ServerSideBar = async ({ serverId }: { serverId: string }) => {
   const token = cookies().get("token")?.value || " ";
@@ -15,7 +16,8 @@ export const ServerSideBar = async ({ serverId }: { serverId: string }) => {
 
   const email = await decodeToken(token);
 
-  const user = await DB.user.findFirst({
+  type UserData = Partial<User>
+  const user: UserData | null = await DB.user.findFirst({
     where: { email },
     select: { id: true, email: true, userName: true, isVerified: true },
   });
@@ -36,41 +38,50 @@ export const ServerSideBar = async ({ serverId }: { serverId: string }) => {
 
   const member = await DB.member.findMany({
     where: {
-      serverId
+      serverId,
     },
     include: {
-      user: true
-    }
+      user: true,
+    },
   });
 
-  
+  const textChannel: Channel[] =
+    server?.channels.filter((f) => f.type === ChannelType.TEXT) || [];
 
-  const textChannel = server?.channels.filter(
-    (f) => f.type === ChannelType.TEXT
-  );
-  const audioChannel = server?.channels.filter(
+  const audioChannel: Channel[] = (server?.channels || []).filter(
     (f) => f.type === ChannelType.VOICE
   );
-  const videoChannel = server?.channels.filter(
+  const videoChannel = (server?.channels || []).filter(
     (f) => f.type === ChannelType.VIDEO
   );
 
-  console.log(textChannel);
- 
-  
+  // console.log(audioChannel);
 
   return (
     <div className="h-full w-full">
+
       {/* Header */}
-      <ServerHeader server={server} serverMember={member} serverId={serverId} inviteCode={server?.inviteCode} serverName={server?.name} />
+      <ServerHeader
+        server={server}
+        serverMember={member}
+        serverId={serverId}
+        inviteCode={server?.inviteCode}
+        serverName={server?.name}
+      />
 
       {/* Text Channel */}
-      {textChannel?.map((channel) => (
-       <div className="w-full h-full " key={channel.id}>
-         {/* <TextChannel channel={channel} /> */}
-         <p>{channel.name}</p>
-        </div> 
-      ))}
+      <TextChannel channel={textChannel} />
+
+      <Separator className="bg-zinc-800 h-[2px]" />
+
+      {/* Audio Channel */}
+      <AudioChannel user={user} channel={audioChannel} />
+
+      <Separator className="bg-zinc-800 h-[2px]" />
+
+      {/* Video Channel */}
+      <VideoChannel user={user} channel={videoChannel} />
+
     </div>
   );
 };

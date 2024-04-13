@@ -1,20 +1,16 @@
 "use client";
 
-import { Channel, ChannelType } from "@prisma/client";
-import { Hash, Mic, Video } from "lucide-react";
+import { Channel, ChannelType, User } from "@prisma/client";
+import { Mic } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
-const channelIconMap = {
-  [ChannelType.TEXT]: <Hash className="h-4 w-4" />,
-  [ChannelType.VOICE]: <Mic className="h-4 w-4" />,
-  [ChannelType.VIDEO]: <Video className="h-4 w-4" />,
-};
-
-interface TextChannelProps {
+type UserData = Partial<User>
+interface AudioChannelProps {
   channel: Channel[];
+  user: UserData;
 }
 
-export const TextChannel = ({ channel }: TextChannelProps) => {
+export const AudioChannel = ({ channel , user }: AudioChannelProps) => {
   const router = useRouter();
   const params = useParams();
 
@@ -24,7 +20,7 @@ export const TextChannel = ({ channel }: TextChannelProps) => {
         <div
         onClick={() =>
           router.push(
-            `/servers/${channel.serverId}/${channel.id}/?channelName=${channel.name}`
+            `/servers/${channel.serverId}/call/?channel=${channel.id}&type=${channel.type}`
           )
         }
         key={channel.id}
@@ -33,7 +29,7 @@ export const TextChannel = ({ channel }: TextChannelProps) => {
               
               `}
       >
-        {channelIconMap[ChannelType.TEXT]}
+        <Mic className="h-4 w-4" />
         <p>{channel.name}</p>
       </div>
       ))}

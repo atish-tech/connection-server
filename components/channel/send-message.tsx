@@ -10,9 +10,10 @@ import axios from "axios";
 interface SendMessageProps {
   channelId: number;
   serverId: string;
+  socket: WebSocket | null;
 }
 
-export const SendMessage = ({ channelId, serverId }: SendMessageProps) => {
+export const SendMessage = ({ channelId, serverId , socket }: SendMessageProps) => {
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -20,6 +21,10 @@ export const SendMessage = ({ channelId, serverId }: SendMessageProps) => {
     e.preventDefault();
     if(message == "")   return;
     try {
+
+      // send message to socket server
+      socket?.send(message)
+
       setLoading(true)
       const data = {
         content: message,
@@ -28,7 +33,7 @@ export const SendMessage = ({ channelId, serverId }: SendMessageProps) => {
       };
       await axios.post("/api/channel/message", data);
       setMessage("");
-      toast.success("Message send Success");
+      // toast.success("Message send Success");
     } catch (error) {
       console.log(error);
       toast.error("Server Error");
