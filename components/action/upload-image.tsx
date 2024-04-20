@@ -11,7 +11,6 @@ interface UploadImageProps {
 }
 
 export function UploadImage({ setImageUrl, imageUrl }: UploadImageProps) {
-  
   const [fileType, setFileType] = useState<string | null>("null");
 
   return (
@@ -35,20 +34,20 @@ export function UploadImage({ setImageUrl, imageUrl }: UploadImageProps) {
       )}
 
       {/* Uploaded PDF preview */}
-      {/* {fileType === "pdf" && (
-        <div className="w-[100px] h-[100px] relative flex items-center justify-center rounded-full bg-white text-black">
-          <button
-                onClick={() => setImageUrl(null)}
-                type="button"
-                className="bg-red-400 text-white p-1 rounded-full absolute top-0 right-0 shadow-sm">
-                    <X className="h-4 w-4" />
-                </button>
-          <div className="flex flex-col items-center justify-center gap-2">
-            <span className="text-2xl">PDF</span>
-            <span className="text-xs">Preview not available</span>
+      {fileType === "pdf" && (
+        <div className="px-10 py-5 rounded-lg relative flex items-center justify-center gap-10 bg-gray-900 text-white">
+          <div>
+            <a className="hover:text-green-300" target="_blank" href={imageUrl}>PDF Url</a>
           </div>
+          <button
+            onClick={() => setImageUrl(undefined)}
+            type="button"
+            className="bg-red-400 hover:bg-red-600 text-white p-1 rounded-full "
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
-      )} */}
+      )}
 
       {/* Upload image button */}
       <UploadButton

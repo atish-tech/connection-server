@@ -1,12 +1,22 @@
 "use client";
 
-import { File, FileBarChart, Folder, ImageIcon, Loader, Send, SendHorizonal, Smile } from "lucide-react";
+import {
+  File,
+  FileBarChart,
+  Folder,
+  ImageIcon,
+  Loader,
+  Send,
+  SendHorizonal,
+  Smile,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { useDrawerAction } from "@/hooks/use-drawer-action";
 
 interface SendMessageProps {
   channelId: number;
@@ -21,7 +31,9 @@ export const SendMessage = ({
 }: SendMessageProps) => {
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { onOpen } = useDrawerAction();
 
+  // Send Message
   const sendMessage = async (e: any) => {
     e.preventDefault();
     if (message == "") return;
@@ -53,9 +65,18 @@ export const SendMessage = ({
         <PopoverTrigger>
           <File />
         </PopoverTrigger>
-        <PopoverContent className="bg-zinc-800 text-white border-none w-fit p-8" side="top">
-          <ImageIcon />
-          <Folder />
+        <PopoverContent
+          className="bg-zinc-800 text-white border-none w-fit p-8"
+          side="top"
+        >
+          <ImageIcon
+            className="h-8 w-8 cursor-pointer m-5 hover:text-zinc-500"
+            onClick={() => onOpen("sendMessage" , {data : {channelId , serverId}})}
+          />
+          <Folder
+            className="h-8 w-8 cursor-pointer m-5 hover:text-zinc-500"
+            onClick={() => onOpen("sendPdf" , {data : {channelId , serverId}})}
+          />
         </PopoverContent>
       </Popover>
 

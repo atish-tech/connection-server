@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Connection Server",
   description: "Server",
-};
+}; 
 
 export default function RootLayout({
   children,

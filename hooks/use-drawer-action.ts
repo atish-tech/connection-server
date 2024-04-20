@@ -1,15 +1,16 @@
-import { Channel, ChannelType, Member, Server } from "@prisma/client";
+import { Channel, ChannelType, Member, Server, User } from "@prisma/client";
 import { create } from "zustand";
 
-export type DrawerActionType = "createServer" | "createChannel" | "invitePeople" | "serverMembers" | "editServer" | "deleteServer" | "leaveServer";
+export type DrawerActionType = "createServer" | "createChannel" | "invitePeople" | "serverMembers" | "editServer" | "deleteServer" | "leaveServer" | "sendMessage" | "sendPdf" | "editProfile"; 
 
 interface Data {
     server?: Server | null;
     channel?: Channel;
+    user?: User;
     channelType?: ChannelType;
     member?: Member[];
     id?: any;
-    data?: {serverId?: string | null , memberRole?:string|null}
+    data?: {serverId?: string | null , memberRole?:string|null , channelId?:number|null}
 }
 
 interface DrawerAction {

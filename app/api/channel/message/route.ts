@@ -29,7 +29,7 @@ export async function POST(req: Request) {
         //     return new NextResponse(verifiedBody.error.errors[0].message, { status: StatusCode.BadRequest });
         // }
 
-        const { name, serverId, type , channelId , content , fileUrl} = body;
+        const { name, serverId, type , channelId , content} = body;
 
         // send message
         const memberId = await DB.member.findFirst({
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
         const message = await DB.channelMessage.create({
             data: {
-                content, fileUrl ,
+                content, type,
                 memberId : memberId?.id,
                 channelId,
             },

@@ -24,6 +24,7 @@ model User {
   userName   String  @unique
   email      String  @unique
   password   String
+  imageUrl   String  @default("")
   isVerified Boolean @default(false)
 
   servers Server[]
@@ -59,7 +60,7 @@ model Channel {
   id       Int         @id @default(autoincrement())
   name     String
   type     ChannelType @default(TEXT)
-  serverId String
+  serverId String 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -90,12 +91,17 @@ model Member {
   channelMessage ChannelMessage[]
 }
 
+enum ChannelMessageType {
+  TEXT
+  IMAGE
+  PDF
+}
 model ChannelMessage {
   id        String  @id @default(uuid())
   content   String  @db.Text
-  fileUrl   String? @db.Text
   memberId  Int
   channelId Int
+  type ChannelMessageType @default(TEXT)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
