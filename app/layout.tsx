@@ -22,6 +22,6 @@ export default function RootLayout({
       <DrawerProvider />
       <body className={`${inter.className} bg-zinc-900 h-screen w-screen text-zinc-100`}>{children}</body>
       <Toaster />
-    </html>
+    </html> 
   );
 }
