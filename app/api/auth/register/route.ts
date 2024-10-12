@@ -13,7 +13,7 @@ interface RequestBody {
   password: string;
 }
 
-export async function POST(req: Request , res:Response) {
+export async function POST(req: Request, res: Response) {
   const data = await req.json();
 
   const { userName, email, password }: RequestBody = data;
@@ -23,7 +23,6 @@ export async function POST(req: Request , res:Response) {
   const type = crediencial.searchParams.get("type");
 
   const origin = crediencial.origin;
-
 
   const userData = await DB.user.findFirst({
     where: { OR: [{ email }, { userName }] },
@@ -35,36 +34,32 @@ export async function POST(req: Request , res:Response) {
       return new NextResponse("Email not exist", {
         status: StatusCode.BadRequest,
       });
-
     else if (userData?.email === email) {
-
       // Check Password
       if (!(await bcryptjs.compare(password, userData?.password)))
         return new NextResponse("Incorrect password", {
           status: StatusCode.BadRequest,
         });
-
-        // check user verivied or not
+      // check user verivied or not
       else if (!userData.isVerified) {
-        return new NextResponse("Email Not verified", { status: StatusCode.BadRequest });
+        return new NextResponse("Email Not verified", {
+          status: StatusCode.BadRequest,
+        });
       }
 
       //  login procedure
       else {
-        const token = await getToken(userData.email)
-        cookies().set("token" , token);
-        
+        const token = await getToken(userData.email);
+        cookies().set("token", token);
+
         return new NextResponse("Login Success", {
           status: StatusCode.Success,
         });
       }
-    }
-
-    else if (userData?.userName !== userName)
+    } else if (userData?.userName !== userName)
       return new NextResponse("Incorrect UserName", {
         status: StatusCode.BadRequest,
       });
-
     else if (userData?.email !== email)
       return new NextResponse("Incorrect Email", {
         status: StatusCode.BadRequest,
@@ -76,7 +71,10 @@ export async function POST(req: Request , res:Response) {
     if (userData) {
       if (!userData?.isVerified) {
         verifyEmail(userData.email, origin);
-        return new NextResponse("Varification link send to your register email", { status: StatusCode.Success });
+        return new NextResponse(
+          "Varification link send to your register email",
+          { status: StatusCode.Success }
+        );
       }
       if (userData?.userName == userName)
         return new NextResponse("User Name already exist", { status: 400 });
@@ -98,6 +96,9 @@ export async function POST(req: Request , res:Response) {
     // send email
     verifyEmail(response.email, origin);
 
-    return NextResponse.json("Registration Success , Please verify your email", { status: StatusCode.Created });
+    return NextResponse.json(
+      "Registration Success , Please verify your email",
+      { status: StatusCode.Created }
+    );
   }
 }

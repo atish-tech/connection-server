@@ -37,7 +37,6 @@ export const ServerHeader = ({
 }: ServerHeaderProps) => {
   const { onOpen } = useDrawerAction();
 
-
   return (
     <div className="w-full">
       <DropdownMenu>
@@ -113,7 +112,7 @@ export const ServerHeader = ({
             <DropdownMenuItem
               className="bg-zinc-800/60 cursor-pointer text-red-600 min-w-[250px] hover:bg-zinc-700"
               onClick={() => {
-                onOpen("leaveServer", { data :{serverId , memberRole} });
+                onOpen("leaveServer", { data: { serverId, memberRole } });
               }}
             >
               Leave Server

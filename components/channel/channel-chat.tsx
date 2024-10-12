@@ -32,10 +32,10 @@ export const ChannelChat = ({
     }
   };
 
-
   useEffect(() => {
     getMessage();
   }, []);
+
   return (
     <div className="w-full h-full flex overflow-auto text-white">
       <div className="flex flex-col mt-auto gap-4 w-full ">
@@ -47,10 +47,10 @@ export const ChannelChat = ({
             >
               <User />
               {/* Content */}
-              <div >
+              <div>
                 {/* user name */}
                 <p className="text-lg pb-2 text-zinc-300">
-                 @ {m.members.user.userName}
+                  @ {m.members.user.userName}
                 </p>
 
                 {m.type === ChannelMessageType.TEXT && (
