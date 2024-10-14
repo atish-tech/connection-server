@@ -1,54 +1,88 @@
 "use client";
 
-import { useEffect } from "react";
-import axios from "axios";
-import { toast } from "sonner";
+import { RefObject, useEffect, useRef } from "react";
 import { ChannelMessageType } from "@prisma/client";
 import { MoreVertical, User } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
+import { MessageState, useMessageStore } from "@/hooks/use-message-store";
+import { MessageSkeletonGroup } from "../skelton/MessageSkelton";
+import { Button } from "../ui/button";
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
-export const ChannelChat = ({
-  channelId,
-  data,
-  setData,
-}: {
-  channelId: number;
-  data: any;
-  setData: any;
-}) => {
-  const getMessage = async () => {
-    try {
-      const response = await axios.post(
-        `/api/channel/message/getMessage/?channelId=${channelId}`
-      );
-      setData(response.data);
+export const ChannelChat = ({ channelId }: { channelId: number }) => {
+  const {
+    messages,
+    getMessages,
+    channel,
+    addMessage,
+    messageLoading,
+    page,
+    incrementPage,
+  }: MessageState = useMessageStore();
 
-      // console.log(data);
-    } catch (error) {
-      console.log(error);
-      toast.error("Error on getting message.");
-    }
-  };
+  const chatContainerRef: RefObject<HTMLDivElement> =
+    useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getMessage();
-  }, []);
+    getMessages({ channelId });
+  }, [channelId]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (channel.current) {
+      channel.current.on("broadcast", { event: "message" }, (payload) => {
+        if (
+          payload.payload.message &&
+          payload.payload.message.channelId === channelId
+        ) {
+          addMessage(payload.payload.message);
+        }
+      });
+    }
+
+    return () => {
+      channel.current?.unsubscribe();
+      channel.current = null;
+    };
+  }, [channel.current]);
 
   return (
-    <div className="w-full h-full flex overflow-auto text-white">
+    <div
+      className="w-full h-full flex overflow-auto text-white"
+      ref={chatContainerRef}
+    >
       <div className="flex flex-col mt-auto gap-4 w-full ">
-        {data.length > 0 &&
-          data?.map((m: any) => (
+        {messageLoading && <MessageSkeletonGroup />}
+
+        {messages.length >= 10 && !messageLoading && (
+          <Button
+            onClick={() => {
+              incrementPage();
+              getMessages({ channelId, page: page + 1 });
+            }}
+            className="mx-auto"
+          >
+            Load More
+          </Button>
+        )}
+
+        {messages.length > 0 &&
+          messages?.map((m: any) => (
             <div
               key={m.id}
               className="flex items-center h-full hover:bg-zinc-800 p-3 gap-3 w-full"
             >
               <User />
-              {/* Content */}
               <div>
-                {/* user name */}
                 <p className="text-lg pb-2 text-zinc-300">
                   @ {m.members.user.userName}
                 </p>

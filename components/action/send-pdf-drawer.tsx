@@ -29,19 +29,18 @@ export const SendPdfDrawer = () => {
   //   serverId?: string | null | undefined;
   // };
 
-  const createServer = async () => {
+  const sendMessage = async () => {
     try {
       setLoading(true);
 
       const messageData = {
         content: imageUrl,
         type: ChannelMessageType.PDF,
-        channelId : data?.data?.channelId,
-        serverId : data?.data?.serverId,
+        channelId: data?.data?.channelId,
+        serverId: data?.data?.serverId,
       };
 
-await axios.post("/api/channel/message", messageData);
-
+      await axios.post("/api/channel/message", messageData);
 
       router.refresh();
     } catch (error) {
@@ -67,14 +66,10 @@ await axios.post("/api/channel/message", messageData);
         {/* Send image to the channel */}
         <Button
           disabled={loading}
-          onClick={createServer}
+          onClick={sendMessage}
           className="bg-green-600 hover:bg-green-500"
         >
-          {loading ? (
-            <Loader className="animate-spin" />
-          ) : (
-            "Send"
-          )}
+          {loading ? <Loader className="animate-spin" /> : "Send"}
         </Button>
       </DialogContent>
     </Dialog>

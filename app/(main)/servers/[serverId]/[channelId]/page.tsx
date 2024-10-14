@@ -1,40 +1,48 @@
-"use client"
+"use client";
 import { ChannelChat } from "@/components/channel/channel-chat";
 import { ChannelChatHeader } from "@/components/channel/cnannel-chat-header";
 import { SendMessage } from "@/components/channel/send-message";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useMessageStore } from "@/hooks/use-message-store";
+import { supabase } from "@/utils/supabase";
+import { RealtimeChannel } from "@supabase/supabase-js";
+import { MutableRefObject, useEffect, useRef } from "react";
 
-const ChannelId =  ({params} : {params : {channelId: string , serverId: string}}) => {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [data, setData] = useState<{ content: any }[]>([]);
+const ChannelId = ({
+  params,
+}: {
+  params: { channelId: string; serverId: string };
+}) => {
+  const { setChannel } = useMessageStore();
+
+  const channelInstance: MutableRefObject<RealtimeChannel | null> =
+    useRef<RealtimeChannel | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8080");
-    // const socket = new WebSocket("ws://www.web-socket-2762.onrender.com/");
+    channelInstance.current = supabase
+      .channel(`channel:${params.channelId}`, {
+        config: {
+          broadcast: {
+            self: true,
+          },
+        },
+      })
+      .subscribe();
 
-    socket.onopen = () => {
-      toast.success("Socket Connected");
-      setSocket(socket);
-    };
+    setChannel(channelInstance.current);
+  }, [params.channelId]);
 
-    socket.onmessage = (message) => {
-      setData((m: { content: string }[]) => [...m, { content: message.data }]);
-      // toast.success(message.data);
-    };
+  return (
+    <div className="w-full h-full flex flex-col">
+      <ChannelChatHeader channelId={params.channelId} />
 
-    // Close connsecion
-    return () => socket.close();
-  }, []);
+      <ChannelChat channelId={Number(params.channelId)} />
 
-    return ( 
-      <div className="w-full h-full flex flex-col">
-        <ChannelChatHeader channelId={params.channelId} />
-        <ChannelChat data={data} setData={setData} channelId={Number(params.channelId)} />
-        <SendMessage socket={socket} channelId={Number(params.channelId)} serverId={params.serverId} />
-      </div>
-    )
-  }
-  
-  export default ChannelId;
-  
+      <SendMessage
+        channelId={Number(params.channelId)}
+        serverId={params.serverId}
+      />
+    </div>
+  );
+};
+
+export default ChannelId;

@@ -2,59 +2,32 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader } from "lucide-react";
 import { UploadImage } from "./upload-image";
-import { useState } from "react";
-import { Input } from "../ui/input";
+import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import axios from "axios";
-import { useDrawerAction } from "@/hooks/use-drawer-action";
-import { useRouter } from "next/navigation";
+import { DrawerAction, useDrawerAction } from "@/hooks/use-drawer-action";
+import { MessageState, useMessageStore } from "@/hooks/use-message-store";
 import { ChannelMessageType } from "@prisma/client";
 
 export const SendMessageDrawer = () => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-  const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
-  const { isOpen, onClose, type, data } = useDrawerAction();
-  const drawerOpen = isOpen && type === "sendMessage";
 
-  // const { channelId, serverId } = data?.data as {
-  //   channelId?: number | null | undefined;
-  //   serverId?: string | null | undefined;
-  // };
+  const { loading, sendMessage }: MessageState = useMessageStore();
 
-  const createServer = async () => {
-    try {
-      setLoading(true);
+  const { isOpen, onClose, type, data }: DrawerAction = useDrawerAction();
 
-      const messageData = {
-        content: imageUrl,
-        type: ChannelMessageType.IMAGE,
-        channelId : data?.data?.channelId,
-        serverId : data?.data?.serverId,
-      };
-
-await axios.post("/api/channel/message", messageData);
-
-
-      router.refresh();
-    } catch (error) {
-      console.log(error);
-      toast.error("Somthing went wrong! Try Again.");
-    } finally {
-      setLoading(false);
-      onClose();
-    }
-  };
+  const { data: serverData } = data ?? {};
 
   return (
-    <Dialog open={drawerOpen} onOpenChange={() => onClose()}>
+    <Dialog
+      open={isOpen && type === "sendImage"}
+      onOpenChange={() => onClose()}
+    >
       <DialogContent className="bg-zinc-800 text-white border-none">
         {/* title */}
         <DialogHeader>
@@ -67,14 +40,28 @@ await axios.post("/api/channel/message", messageData);
         {/* Send image to the channel */}
         <Button
           disabled={loading}
-          onClick={createServer}
+          onClick={(
+            e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+          ) => {
+            if (!imageUrl) {
+              toast.error("Please upload an image first.");
+              return;
+            }
+
+            sendMessage({
+              message: imageUrl,
+              messageType: ChannelMessageType.IMAGE,
+              setMessage: setImageUrl as Dispatch<SetStateAction<string>>,
+              channelId: serverData?.channelId as number,
+              serverId: serverData?.serverId as string,
+              e,
+            });
+
+            onClose();
+          }}
           className="bg-green-600 hover:bg-green-500"
         >
-          {loading ? (
-            <Loader className="animate-spin" />
-          ) : (
-            "Send"
-          )}
+          {loading ? <Loader className="animate-spin" /> : "Send"}
         </Button>
       </DialogContent>
     </Dialog>

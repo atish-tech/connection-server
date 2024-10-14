@@ -1,62 +1,30 @@
 "use client";
-
 import {
   File,
-  FileBarChart,
   Folder,
   ImageIcon,
   Loader,
-  Send,
   SendHorizonal,
   Smile,
 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
-import axios from "axios";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useDrawerAction } from "@/hooks/use-drawer-action";
+import { MessageState, useMessageStore } from "@/hooks/use-message-store";
 
 interface SendMessageProps {
   channelId: number;
   serverId: string;
-  socket: WebSocket | null;
 }
 
-export const SendMessage = ({
-  channelId,
-  serverId,
-  socket,
-}: SendMessageProps) => {
+export const SendMessage = ({ channelId, serverId }: SendMessageProps) => {
   const [message, setMessage] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const { loading, sendMessage }: MessageState = useMessageStore();
+
   const { onOpen } = useDrawerAction();
-
-  // Send Message
-  const sendMessage = async (e: any) => {
-    e.preventDefault();
-    if (message == "") return;
-    try {
-      // send message to socket server
-      socket?.send(message);
-
-      setLoading(true);
-      const data = {
-        content: message,
-        channelId,
-        serverId,
-      };
-      await axios.post("/api/channel/message", data);
-      setMessage("");
-      // toast.success("Message send Success");
-    } catch (error) {
-      console.log(error);
-      toast.error("Server Error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="w-full mt-4 flex items-center bg-zinc-800 p-5 gap-3">
@@ -71,12 +39,14 @@ export const SendMessage = ({
         >
           <ImageIcon
             className="h-8 w-8 cursor-pointer m-5 hover:text-zinc-500"
-            onClick={() => onOpen("sendMessage" , {data : {channelId , serverId}})}
+            onClick={() =>
+              onOpen("sendImage", { data: { channelId, serverId } })
+            }
           />
-          <Folder
+          {/* <Folder
             className="h-8 w-8 cursor-pointer m-5 hover:text-zinc-500"
-            onClick={() => onOpen("sendPdf" , {data : {channelId , serverId}})}
-          />
+            onClick={() => onOpen("sendPdf", { data: { channelId, serverId } })}
+          /> */}
         </PopoverContent>
       </Popover>
 
@@ -98,7 +68,12 @@ export const SendMessage = ({
       </Popover>
 
       {/* Input field */}
-      <form className="w-full" onSubmit={sendMessage}>
+      <form
+        className="w-full"
+        onSubmit={(e) =>
+          sendMessage({ message, setMessage, serverId, channelId, e })
+        }
+      >
         <input
           value={message}
           disabled={loading}
@@ -112,7 +87,9 @@ export const SendMessage = ({
         <Loader className="animate-spin" />
       ) : (
         <SendHorizonal
-          onClick={sendMessage}
+          onClick={(e: React.MouseEvent<SVGSVGElement>) =>
+            sendMessage({ message, setMessage, serverId, channelId, e })
+          }
           className="cursor-pointer hover:text-zinc-400"
         />
       )}
