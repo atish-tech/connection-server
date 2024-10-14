@@ -33,7 +33,7 @@ const ChannelId = ({
 
   return (
     <div className="w-full h-full flex flex-col">
-      <ChannelChatHeader channelId={params.channelId} />
+      <ChannelChatHeader serverId={params.serverId} />
 
       <ChannelChat channelId={Number(params.channelId)} />
 

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import "@uploadthing/react/styles.css";
 import { DrawerProvider } from "@/components/provider/drawer-provider";
+import { SheetProvider } from "@/components/provider/SheetProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <DrawerProvider />
+
+      <SheetProvider />
 
       <body
         className={`${inter.className} bg-zinc-900 h-screen w-screen text-zinc-100`}

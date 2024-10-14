@@ -1,68 +1,45 @@
-import { decodeToken } from "@/config/decodeToken";
-import { DB } from "@/lib/prisma";
-import { Channel, ChannelType, MemberRole, User } from "@prisma/client";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
 import { ServerHeader } from "./server-header";
 import { TextChannel } from "./text-channel";
 import { AudioChannel } from "./audio-channel";
 import { VideoChannel } from "./video-channel";
 import { Separator } from "../ui/separator";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { ChannelGroupSkelton } from "../skelton/ChannelGroupSkelton";
 
-export const ServerSideBar = async ({ serverId }: { serverId: string }) => {
-  const token = cookies().get("token")?.value || " ";
+export const ServerSideBar = ({ serverId }: { serverId: string }) => {
+  const [data, setData] = useState<any>(null);
+  const router = useRouter();
 
-  if (!token) return redirect("/login");
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(`/api/server/serverId/?id=${serverId}`);
+      if (response.data.status === 401) {
+        router.push("/login");
+      } else {
+        setData(response.data);
+      }
+    };
 
-  const email = await decodeToken(token);
+    fetchData();
+  }, [serverId]);
 
-  type UserData = Partial<User>;
-  const user: UserData | null = await DB.user.findFirst({
-    where: { email },
-    select: { id: true, email: true, userName: true, isVerified: true },
-  });
+  if (!data) {
+    return <ChannelGroupSkelton />;
+  }
 
-  // Validate User
-  if (!user) return redirect("/login");
-
-  // get server resources
-  const server = await DB.server.findUnique({
-    where: {
-      id: serverId,
-    },
-
-    include: {
-      channels: true,
-    },
-  });
-
-  const member = await DB.member.findMany({
-    where: {
-      serverId,
-    },
-    include: {
-      user: true,
-    },
-  });
-
-  const textChannel: Channel[] =
-    server?.channels.filter((f) => f.type === ChannelType.TEXT) || [];
-
-  const audioChannel: Channel[] = (server?.channels || []).filter(
-    (f) => f.type === ChannelType.VOICE
-  );
-  const videoChannel = (server?.channels || []).filter(
-    (f) => f.type === ChannelType.VIDEO
-  );
-
-  const memberRole = await DB.member.findFirst({
-    where: {
-      userId: user.id,
-      serverId: server?.id,
-    },
-  });
-
-  
+  const {
+    server,
+    member,
+    textChannel,
+    audioChannel,
+    videoChannel,
+    memberRole,
+    user,
+  } = data;
 
   return (
     <div className="h-full w-full">

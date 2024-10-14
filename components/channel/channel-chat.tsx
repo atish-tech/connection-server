@@ -65,11 +65,12 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
 
         {messages.length >= 10 && !messageLoading && (
           <Button
+            size="sm"
             onClick={() => {
               incrementPage();
               getMessages({ channelId, page: page + 1 });
             }}
-            className="mx-auto"
+            className="mx-auto text-xs hover:bg-zinc-800  mt-2 bg-transparent border border-zinc-700"
           >
             Load More
           </Button>
@@ -81,7 +82,7 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
               key={m.id}
               className="flex items-center h-full hover:bg-zinc-800 p-3 gap-3 w-full"
             >
-              <User />
+              <User className="bg-transparent/20 p-1 rounded-full h-8 w-8 text-white" />
               <div>
                 <p className="text-lg pb-2 text-zinc-300">
                   @ {m.members.user.userName}
