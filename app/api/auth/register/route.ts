@@ -90,7 +90,7 @@ export async function POST(req: Request, res: Response) {
 
     // create entry in Database
     const response = await DB.user.create({
-      data: { userName, email, password: hashPassword },
+      data: { userName, email, password: hashPassword, isVerified: true },
     });
 
     // send email
