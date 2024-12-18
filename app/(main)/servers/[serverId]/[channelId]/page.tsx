@@ -7,11 +7,11 @@ import { supabase } from "@/utils/supabase";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { MutableRefObject, useEffect, useRef } from "react";
 
-const ChannelId = ({
+function ChannelId({
   params,
 }: {
   params: { channelId: string; serverId: string };
-}) => {
+}) {
   const { setChannel } = useMessageStore();
 
   const channelInstance: MutableRefObject<RealtimeChannel | null> =
@@ -43,6 +43,6 @@ const ChannelId = ({
       />
     </div>
   );
-};
+}
 
 export default ChannelId;

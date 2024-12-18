@@ -17,7 +17,13 @@ export async function GET(req: NextRequest) {
 
   const user = await DB.user.findFirst({
     where: { email },
-    select: { id: true, email: true, userName: true, isVerified: true },
+    select: {
+      id: true,
+      email: true,
+      userName: true,
+      isVerified: true,
+      imageUrl: true,
+    },
   });
 
   if (!user) return NextResponse.json({ message: "Unauthorized", status: 401 });

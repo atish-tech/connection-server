@@ -9,17 +9,25 @@ import { Separator } from "../ui/separator";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ChannelGroupSkelton } from "../skelton/ChannelGroupSkelton";
+import { useProfileStore, UseProfileType } from "@/hooks/use-profile";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export const ServerSideBar = ({ serverId }: { serverId: string }) => {
   const [data, setData] = useState<any>(null);
-  const router = useRouter();
+
+  const router: AppRouterInstance = useRouter();
+
+  const { setProfile }: UseProfileType = useProfileStore();
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(`/api/server/serverId/?id=${serverId}`);
+
       if (response.data.status === 401) {
         router.push("/login");
       } else {
+        setProfile(response.data.user);
+
         setData(response.data);
       }
     };
