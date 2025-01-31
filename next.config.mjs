@@ -21,6 +21,8 @@ const nextConfig = {
   images: {
     domains: ["uploadthing.com", "utfs.io", "clerk.com", "img.clerk.com"],
   },
+  reactStrictMode: true,
+  output: "standalone",
 };
 
 export default nextConfig;
