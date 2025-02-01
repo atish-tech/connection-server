@@ -1,40 +1,55 @@
 "use client";
 import { User } from "@prisma/client";
-import { User2 } from "lucide-react";
+import { LogOut, Pen, Pencil, Sparkles, User2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useDrawerAction } from "@/hooks/use-drawer-action";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export const UserHoverCart = ({ user }: { user: User }) => {
   const { onOpen } = useDrawerAction();
   return (
-    <div className="mt-auto cursor-pointer">
-      <Popover>
-        <PopoverTrigger>
-          <User2 className="h-12 w-12" />{" "}
-        </PopoverTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <User2 className="h-12 w-12" />
+      </DropdownMenuTrigger>
 
-        <PopoverContent
-          side="right"
-          className="bg-zinc-800 text-white border-none"
-        >
-          <p>{user.userName} </p>
-
-          <p>{user.email}</p>
-
-          <div className="flex items-center justify-between mt-5">
-            <Button
-              onClick={() => onOpen("editProfile", user)}
-              className=""
-              variant={"secondary"}
-            >
-              Edit
-            </Button>
-
-            <Button variant={"destructive"}>Logout</Button>
+      <DropdownMenuContent
+        className="w-52 bg-zinc-800 text-white border-none"
+        align="start"
+      >
+        <div className="py-1.5 px-2 w-full">
+          <div className="font-medium">{user.userName}</div>
+          <div className="text-sm w-full overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground">
+            {user.email}
           </div>
-        </PopoverContent>
-      </Popover>
-    </div>
+        </div>
+
+        <DropdownMenuSeparator className="bg-zinc-700" />
+
+        <DropdownMenuItem
+          onClick={() => onOpen("editProfile", user)}
+          className="cursor-pointer hover:bg-red-700"
+        >
+          <Pencil className="mr-2 h-4 w-4" />
+
+          <span>Edit Profile</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator className="bg-zinc-700" />
+
+        <DropdownMenuItem className="!text-destructive cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+
+          <span>Log Out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
