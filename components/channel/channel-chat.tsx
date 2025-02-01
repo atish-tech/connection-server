@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { MessageState, useMessageStore } from "@/hooks/use-message-store";
 import { MessageSkeletonGroup } from "../skelton/MessageSkelton";
 import { Button } from "../ui/button";
+import { ChatAction } from "./chat-action";
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
 export const ChannelChat = ({ channelId }: { channelId: number }) => {
@@ -119,7 +120,8 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
                 </p>
               </div>
 
-              <MoreVertical className="ml-auto" />
+              {/* <MoreVertical className="ml-auto" /> */}
+              <ChatAction />
             </div>
           ))}
       </div>
