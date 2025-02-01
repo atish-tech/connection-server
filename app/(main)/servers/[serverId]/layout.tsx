@@ -16,8 +16,8 @@ const ServerLayout = async ({
   return (
     <ResizablePanelGroup className="h-full" direction="horizontal">
       <ResizablePanel
-        className="w-full h-full hidden md:block bg-zinc-900/50"
-        defaultSize={30}
+        className="w-full h-full  bg-zinc-900/50"
+        defaultSize={20}
       >
         <ServerSideBar serverId={params.serverId} />
       </ResizablePanel>
@@ -27,7 +27,7 @@ const ServerLayout = async ({
         withHandle
       />
 
-      <ResizablePanel className="h-full" defaultSize={70}>
+      <ResizablePanel className="h-full" defaultSize={80}>
         <div className="w-full bg-zinc-800/10 h-full">{children}</div>
       </ResizablePanel>
     </ResizablePanelGroup>
