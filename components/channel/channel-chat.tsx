@@ -84,6 +84,7 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
               className="flex items-center h-full hover:bg-zinc-800 p-3 gap-3 w-full"
             >
               <User className="bg-transparent/20 p-1 rounded-full h-8 w-8 text-white" />
+
               <div>
                 <p className="text-lg pb-2 text-zinc-300">
                   @ {m.members.user.userName}
@@ -120,8 +121,7 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
                 </p>
               </div>
 
-              {/* <MoreVertical className="ml-auto" /> */}
-              <ChatAction />
+              <ChatAction message={m} />
             </div>
           ))}
       </div>

@@ -1,4 +1,4 @@
-import { Delete, MoreVertical, Pencil } from "lucide-react";
+import { Delete, Loader, MoreVertical, Pencil } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,12 +6,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { deleteChat } from "@/serverAction/chat";
+import { ChannelMessage } from "@prisma/client";
+import { useState } from "react";
+import { toast } from "sonner";
 
-export const ChatAction = () => {
+export const ChatAction = ({ message }: { message: ChannelMessage }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="ml-auto hover:bg-transparent/15 p-2 rounded-full">
-        <MoreVertical className="h-6 w-6" />
+        {loading ? (
+          <Loader className="animate-spin" />
+        ) : (
+          <MoreVertical className="h-6 w-6" />
+        )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -28,7 +38,22 @@ export const ChatAction = () => {
 
         <DropdownMenuSeparator className="bg-zinc-700" />
 
-        <DropdownMenuItem className="!text-destructive cursor-pointer">
+        <DropdownMenuItem
+          onClick={async () => {
+            try {
+              setLoading(true);
+
+              await deleteChat(message.id);
+
+              toast.success("Message deleted");
+            } catch (error) {
+              toast.error("You are not allowed to perform this action");
+            } finally {
+              setLoading(false);
+            }
+          }}
+          className="!text-destructive cursor-pointer"
+        >
           <Delete className="mr-2 h-4 w-4" />
 
           <span>Delete</span>
