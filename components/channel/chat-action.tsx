@@ -10,9 +10,12 @@ import { deleteChat } from "@/serverAction/chat";
 import { ChannelMessage } from "@prisma/client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useMessageStore } from "@/hooks/use-message-store";
 
 export const ChatAction = ({ message }: { message: ChannelMessage }) => {
   const [loading, setLoading] = useState<boolean>(false);
+
+  const { deleteMessageFromChat } = useMessageStore();
 
   return (
     <DropdownMenu>
@@ -44,6 +47,8 @@ export const ChatAction = ({ message }: { message: ChannelMessage }) => {
               setLoading(true);
 
               await deleteChat(message.id);
+
+              deleteMessageFromChat(message.id);
 
               toast.success("Message deleted");
             } catch (error) {

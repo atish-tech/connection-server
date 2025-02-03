@@ -2,13 +2,14 @@
 
 import { RefObject, useEffect, useRef } from "react";
 import { ChannelMessageType } from "@prisma/client";
-import { MoreVertical, User } from "lucide-react";
+import { User } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { MessageState, useMessageStore } from "@/hooks/use-message-store";
 import { MessageSkeletonGroup } from "../skelton/MessageSkelton";
 import { Button } from "../ui/button";
 import { ChatAction } from "./chat-action";
+
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
 export const ChannelChat = ({ channelId }: { channelId: number }) => {

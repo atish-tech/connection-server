@@ -17,6 +17,7 @@ export interface MessageState {
   messageLoading: boolean;
   page: number;
   getMessages: (params: { channelId: number; page?: number }) => Promise<void>;
+  deleteMessageFromChat: (messageId: string) => void;
   sendMessage: (params: {
     message: string;
     messageType?: ChannelMessageType;
@@ -67,6 +68,14 @@ export const useMessageStore = create<MessageState>((set, get) => ({
     } finally {
       set({ messageLoading: false });
     }
+  },
+
+  deleteMessageFromChat: (messageId) => {
+    set((state) => ({
+      messages: state.messages.filter(
+        (message: any) => message.id !== messageId
+      ),
+    }));
   },
 
   sendMessage: async ({
