@@ -13,3 +13,18 @@ export async function deleteChat(id: string) {
     console.log(error);
   }
 }
+
+export async function editChat(id: string, message: string) {
+  try {
+    await DB.channelMessage.update({
+      where: {
+        id,
+      },
+      data: {
+        content: message,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}

@@ -12,7 +12,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useMessageStore } from "@/hooks/use-message-store";
 
-export const ChatAction = ({ message }: { message: ChannelMessage }) => {
+export const ChatAction = ({
+  chat,
+  setEditing,
+}: {
+  chat: ChannelMessage;
+  setEditing: () => void;
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const { deleteMessageFromChat } = useMessageStore();
@@ -33,7 +39,10 @@ export const ChatAction = ({ message }: { message: ChannelMessage }) => {
       >
         {/* <DropdownMenuSeparator className="bg-zinc-700" /> */}
 
-        <DropdownMenuItem className="cursor-pointer hover:bg-red-700">
+        <DropdownMenuItem
+          onClick={setEditing}
+          className="cursor-pointer hover:bg-red-700"
+        >
           <Pencil className="mr-2 h-4 w-4" />
 
           <span>Edit</span>
@@ -46,9 +55,9 @@ export const ChatAction = ({ message }: { message: ChannelMessage }) => {
             try {
               setLoading(true);
 
-              await deleteChat(message.id);
+              await deleteChat(chat.id);
 
-              deleteMessageFromChat(message.id);
+              deleteMessageFromChat(chat.id);
 
               toast.success("Message deleted");
             } catch (error) {

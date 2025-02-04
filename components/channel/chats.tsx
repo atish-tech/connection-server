@@ -1,16 +1,10 @@
 "use client";
 
 import { RefObject, useEffect, useRef } from "react";
-import { ChannelMessageType } from "@prisma/client";
-import { User } from "lucide-react";
-import Image from "next/image";
-import { format } from "date-fns";
 import { MessageState, useMessageStore } from "@/hooks/use-message-store";
 import { MessageSkeletonGroup } from "../skelton/MessageSkelton";
 import { Button } from "../ui/button";
-import { ChatAction } from "./chat-action";
-
-const DATE_FORMAT = "d MMM yyyy, HH:mm";
+import { Chat } from "./chat";
 
 export const ChannelChat = ({ channelId }: { channelId: number }) => {
   const {
@@ -79,52 +73,7 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
         )}
 
         {messages.length > 0 &&
-          messages?.map((m: any) => (
-            <div
-              key={m.id}
-              className="flex items-center h-full hover:bg-zinc-800 p-3 gap-3 w-full"
-            >
-              <User className="bg-transparent/20 p-1 rounded-full h-8 w-8 text-white" />
-
-              <div>
-                <p className="text-lg pb-2 text-zinc-300">
-                  @ {m.members.user.userName}
-                </p>
-
-                {m.type === ChannelMessageType.TEXT && (
-                  <p className="text-xl">{m.content} </p>
-                )}
-
-                {m.type === ChannelMessageType.IMAGE && (
-                  <div className="h-[150px] w-[150px] object-cover">
-                    <Image
-                      src={m.content}
-                      alt="message"
-                      height={100}
-                      width={100}
-                      className="w-[150px] h-[150px] object-cover bg-transparent"
-                    />
-                  </div>
-                )}
-
-                {m.type === ChannelMessageType.PDF && (
-                  <a
-                    className="text-sky-400 hover:text-sky-700"
-                    target="_blank"
-                    href={m.content}
-                  >
-                    Pdf File Link
-                  </a>
-                )}
-
-                <p className="text-xs text-zinc-400 pt-1">
-                  {format(new Date(m.createdAt), DATE_FORMAT)}{" "}
-                </p>
-              </div>
-
-              <ChatAction message={m} />
-            </div>
-          ))}
+          messages?.map((m: any) => <Chat chat={m} key={m.id} />)}
       </div>
     </div>
   );

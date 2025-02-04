@@ -1,5 +1,5 @@
 "use client";
-import { ChannelChat } from "@/components/channel/channel-chat";
+import { ChannelChat } from "@/components/channel/chats";
 import { ChannelChatHeader } from "@/components/channel/cnannel-chat-header";
 import { SendMessage } from "@/components/channel/send-message";
 import { useMessageStore } from "@/hooks/use-message-store";
