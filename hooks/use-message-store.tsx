@@ -1,4 +1,4 @@
-import { ChannelMessageType } from "@prisma/client";
+import { ChannelMessage, ChannelMessageType } from "@prisma/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import axios from "axios";
 import {
@@ -34,6 +34,7 @@ export interface MessageState {
   channel: MutableRefObject<RealtimeChannel | null>;
   setChannel: (channel: RealtimeChannel | null) => void;
   incrementPage: () => void;
+  setEditedChat: (chat: ChannelMessage) => void;
 }
 
 export const useMessageStore = create<MessageState>((set, get) => ({
@@ -136,5 +137,20 @@ export const useMessageStore = create<MessageState>((set, get) => ({
 
   incrementPage: () => {
     set((state) => ({ page: state.page + 1 }));
+  },
+
+  setEditedChat(chat) {
+    set((state) => ({
+      messages: state.messages.map((message: any) =>
+        message.id === chat.id
+          ? {
+              ...message,
+              isEdited: chat.isEdited,
+              content: chat.content,
+              createdAt: chat.updatedAt,
+            }
+          : message
+      ),
+    }));
   },
 }));

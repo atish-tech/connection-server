@@ -1,6 +1,7 @@
 "use server";
 
 import { DB } from "@/lib/prisma";
+import { ChannelMessage } from "@prisma/client";
 
 export async function deleteChat(id: string) {
   try {
@@ -14,17 +15,25 @@ export async function deleteChat(id: string) {
   }
 }
 
-export async function editChat(id: string, message: string) {
+export async function editChat(
+  id: string,
+  message: string
+): Promise<ChannelMessage | null> {
   try {
-    await DB.channelMessage.update({
+    const response: ChannelMessage = await DB.channelMessage.update({
       where: {
         id,
       },
       data: {
         content: message,
+        isEdited: true,
       },
     });
+
+    return response;
   } catch (error) {
     console.log(error);
+
+    return null;
   }
 }

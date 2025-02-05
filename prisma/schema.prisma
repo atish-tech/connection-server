@@ -102,6 +102,7 @@ model ChannelMessage {
   memberId  Int
   channelId Int
   type ChannelMessageType @default(TEXT)
+  isEdited  Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

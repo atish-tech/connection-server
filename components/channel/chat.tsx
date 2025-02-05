@@ -1,21 +1,24 @@
 import { Loader, User } from "lucide-react";
 import Image from "next/image";
 import { ChatAction } from "./chat-action";
-import { format } from "date-fns";
-import { ChannelMessageType } from "@prisma/client";
-import { useState } from "react";
+import { format, set } from "date-fns";
+import { ChannelMessage, ChannelMessageType } from "@prisma/client";
+import { use, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { editChat } from "@/serverAction/chat";
 import { toast } from "sonner";
+import { useMessageStore } from "@/hooks/use-message-store";
+
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
 export function Chat({ chat }: { chat: any }) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [content, setContent] = useState<string>(chat.content);
+  const { setEditedChat } = useMessageStore();
 
-  function setEditing() {
+  function setEditing(): void {
     setIsEditing(true);
   }
 
@@ -45,9 +48,16 @@ export function Chat({ chat }: { chat: any }) {
                   try {
                     setLoading(true);
 
-                    await editChat(chat.id, content);
+                    const editedChat: ChannelMessage | null = await editChat(
+                      chat.id,
+                      content
+                    );
 
                     setIsEditing(false);
+
+                    if (editedChat) {
+                      setEditedChat(editedChat);
+                    }
 
                     toast.success("Message edited successfully");
                   } catch (error) {
@@ -99,7 +109,8 @@ export function Chat({ chat }: { chat: any }) {
         )}
 
         <p className="text-xs text-zinc-400 pt-1">
-          {format(new Date(chat.createdAt), DATE_FORMAT)}{" "}
+          {chat.isEdited && "(Edited)"}{" "}
+          {format(new Date(chat.createdAt), DATE_FORMAT)}
         </p>
       </div>
 

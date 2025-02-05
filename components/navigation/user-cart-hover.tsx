@@ -16,8 +16,8 @@ export const UserHoverCart = ({ user }: { user: User }) => {
   const { onOpen } = useDrawerAction();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <User2 className="h-12 w-12" />
+      <DropdownMenuTrigger className="mt-auto">
+        <User2 className="h-12 w-12 " />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent

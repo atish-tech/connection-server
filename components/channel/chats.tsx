@@ -5,6 +5,7 @@ import { MessageState, useMessageStore } from "@/hooks/use-message-store";
 import { MessageSkeletonGroup } from "../skelton/MessageSkelton";
 import { Button } from "../ui/button";
 import { Chat } from "./chat";
+import { ChannelMessage } from "@prisma/client";
 
 export const ChannelChat = ({ channelId }: { channelId: number }) => {
   const {
@@ -73,7 +74,9 @@ export const ChannelChat = ({ channelId }: { channelId: number }) => {
         )}
 
         {messages.length > 0 &&
-          messages?.map((m: any) => <Chat chat={m} key={m.id} />)}
+          messages?.map((m: any) => (
+            <Chat chat={m as ChannelMessage} key={m.id} />
+          ))}
       </div>
     </div>
   );
