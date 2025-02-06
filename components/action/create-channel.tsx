@@ -30,15 +30,13 @@ const CreateServerSchema = z.object({
 });
 
 export const CreateChannelDrawer = () => {
-  const [name, setname] = useState<string | null>("");
+  const [name, setName] = useState<string | null>("");
   const [channelType, setChannelType] = useState<ChannelType>(ChannelType.TEXT);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const { isOpen, onClose, type, data } = useDrawerAction();
-  const drawerOpen = isOpen && type === "createChannel";
 
-
-  const createChannel = async () => {
+  async function createChannel() {
     // Validate input
     const validate = CreateServerSchema.safeParse({ name });
     if (!validate.success) return toast.error(validate.error.errors[0].message);
@@ -48,22 +46,27 @@ export const CreateChannelDrawer = () => {
       setLoading(true);
 
       await axios.post("/api/channel", {
-        name, serverId:data?.id , type : channelType
+        name,
+        serverId: data?.id,
+        type: channelType,
       });
-      
+
       router.refresh();
-      toast.success("channel created")
+      toast.success("Channel created");
     } catch (error) {
       console.log(error);
-      toast.error("Somthing went wrong! Try Again.");
+      toast.error("Something went wrong! Try again.");
     } finally {
       setLoading(false);
       onClose();
     }
-  };
+  }
 
   return (
-    <Dialog open={drawerOpen} onOpenChange={() => onClose()}>
+    <Dialog
+      open={isOpen && type === "createChannel"}
+      onOpenChange={() => onClose()}
+    >
       <DialogContent className="bg-zinc-800 text-white border-none">
         {/* title */}
         <DialogHeader>
@@ -72,41 +75,28 @@ export const CreateChannelDrawer = () => {
             Create a new channel by providing a name and type.
           </DialogDescription>
         </DialogHeader>
-
-        {/* server name */}
-        <Input
-          className="text-zinc-800 text-xl"
-          placeholder="Channel Name"
-          onChange={(e) => setname(e.target.value)}
-        />
-
-        {/* Channel Type */}
-        <Select onValueChange={(type: ChannelType) => setChannelType(type)}>
-          <SelectTrigger className="w-full bg-zinc-800 ">
-            <SelectValue placeholder="Channel Type" />
-          </SelectTrigger>
-          <SelectContent className="bg-zinc-700">
-
-            <SelectItem value={ChannelType.TEXT}>{ChannelType.TEXT}</SelectItem>
-
-            <SelectItem value={ChannelType.VOICE}>
-              {ChannelType.VOICE}
-            </SelectItem>
-
-            <SelectItem value={ChannelType.VIDEO}>
-              {ChannelType.VIDEO}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Create Server */}
-        <Button
-          disabled={loading}
-          onClick={createChannel}
-          className="bg-green-600 hover:bg-green-500"
-        >
-          {loading ? <Loader className="animate-spin" /> : "Create Channel"}
-        </Button>
+        <div>
+          <Input
+            placeholder="Channel Name"
+            value={name || ""}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Select
+            value={channelType}
+            onValueChange={(value) => setChannelType(value as ChannelType)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a channel type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ChannelType.TEXT}>Text</SelectItem>
+              <SelectItem value={ChannelType.VOICE}>Voice</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button onClick={createChannel} disabled={loading}>
+            {loading ? <Loader className="animate-spin" /> : "Create Channel"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

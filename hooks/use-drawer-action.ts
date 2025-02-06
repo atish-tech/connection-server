@@ -34,11 +34,12 @@ export interface DrawerAction {
   onOpen: (type: DrawerActionType, data?: Data) => void;
   onClose: () => void;
 }
+
 export const useDrawerAction = create<DrawerAction>((set) => ({
   isOpen: false,
   type: null,
-  data: {}, // Provide an initializer for the 'data' property
+  data: {},
   onOpen: (type: DrawerActionType, data = {}) =>
-    set({ isOpen: true, type, data }), // Add initializer for 'data'
+    set({ isOpen: true, type, data }),
   onClose: () => set({ isOpen: false, type: null }),
 }));

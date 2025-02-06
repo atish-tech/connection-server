@@ -11,20 +11,19 @@ import { SendMessageDrawer } from "../action/send-image-drawer";
 import { SendPdfDrawer } from "../action/send-pdf-drawer";
 import { ServerMembers } from "../action/server-member";
 
-
 export const DrawerProvider = () => {
-    return (
-        <>
-            <CreateServerDrawer />
-            <CreateChannelDrawer />
-            <InvitePeople />
-            <ServerMembers />
-            <EditServer />
-            <DeleteServer />
-            <LeaveServer />
-            <SendMessageDrawer />
-            <SendPdfDrawer />
-            <EditProfileDrawer />
-        </>
-    )
-}
+  return (
+    <>
+      <CreateServerDrawer />
+      <CreateChannelDrawer />
+      <InvitePeople />
+      <ServerMembers />
+      <EditServer />
+      <DeleteServer />
+      <LeaveServer />
+      <SendMessageDrawer />
+      <SendPdfDrawer />
+      <EditProfileDrawer />
+    </>
+  );
+};
