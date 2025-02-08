@@ -2,12 +2,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { CustomToltip } from "../custom-component/tooltip";
 import { ScrollArea } from "../ui/scroll-area";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 export const ServerList = ({ server }: { server: any }) => {
   const navigate = useRouter();
@@ -25,11 +19,13 @@ export const ServerList = ({ server }: { server: any }) => {
         >
           <CustomToltip
             component={
+              <div className="h-8 w-8 object-cover">
               <img
                 src={server.imageUrl}
-                className="h-8 w-8 rounded-md"
+                className="h-8 w-8 rounded-md object-cover bg-transparent"
                 alt="server"
               />
+              </div>
             }
             message={server.name}
           />
