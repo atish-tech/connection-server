@@ -67,7 +67,7 @@ export const CreateChannelDrawer = () => {
       open={isOpen && type === "createChannel"}
       onOpenChange={() => onClose()}
     >
-      <DialogContent className="bg-zinc-800 text-white border-none">
+      <DialogContent className="bg-zinc-800 text-white border-none ">
         {/* title */}
         <DialogHeader>
           <DialogTitle>Create Channel</DialogTitle>
@@ -76,24 +76,34 @@ export const CreateChannelDrawer = () => {
           </DialogDescription>
         </DialogHeader>
         <div>
-          <Input
-            placeholder="Channel Name"
-            value={name || ""}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Select
-            value={channelType}
-            onValueChange={(value) => setChannelType(value as ChannelType)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a channel type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ChannelType.TEXT}>Text</SelectItem>
-              <SelectItem value={ChannelType.VOICE}>Voice</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={createChannel} disabled={loading}>
+          {/* server name */}
+        <Input
+          className="text-zinc-800 text-xl mb-2"
+          placeholder="Channel Name"
+          onChange={(e) => setName(e.target.value)}
+        />
+        {/* channel type */}
+         
+
+          <Select onValueChange={(type: ChannelType) => setChannelType(type)}>
+          <SelectTrigger className="w-full bg-zinc-800 ">
+            <SelectValue placeholder="Channel Type" />
+          </SelectTrigger>
+          <SelectContent className="bg-zinc-700">
+
+            <SelectItem value={ChannelType.TEXT}>{ChannelType.TEXT}</SelectItem>
+
+            <SelectItem value={ChannelType.VOICE}>
+              {ChannelType.VOICE}
+            </SelectItem>
+
+            <SelectItem value={ChannelType.VIDEO}>
+              {ChannelType.VIDEO}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+
+          <Button className="bg-green-600 hover:bg-green-500 mt-4  ml-auto" onClick={createChannel} disabled={loading}>
             {loading ? <Loader className="animate-spin" /> : "Create Channel"}
           </Button>
         </div>

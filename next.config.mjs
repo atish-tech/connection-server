@@ -19,7 +19,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ["uploadthing.com", "utfs.io", "clerk.com", "img.clerk.com"],
+    domains: ["uploadthing.com", "utfs.io", "clerk.com", "img.clerk.com", "xwbmaxsmkzdbvmgvbqqo.supabase.co"],
   },
   reactStrictMode: true,
   output: "standalone",
