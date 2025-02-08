@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { logout } from "@/serverAction/auth";
 
 export const UserHoverCart = ({ user }: { user: User }) => {
   const { onOpen } = useDrawerAction();
@@ -44,7 +45,12 @@ export const UserHoverCart = ({ user }: { user: User }) => {
 
         <DropdownMenuSeparator className="bg-zinc-700" />
 
-        <DropdownMenuItem className="!text-destructive cursor-pointer">
+        <DropdownMenuItem
+          onClick={() => {
+            logout();
+          }}
+          className="!text-destructive cursor-pointer"
+        >
           <LogOut className="mr-2 h-4 w-4" />
 
           <span>Log Out</span>
