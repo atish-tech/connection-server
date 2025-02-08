@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import { create, StoreApi, UseBoundStore } from "zustand";
 
 export interface UseProfileType {
-  profile: Omit<User, "password" | "createdAt" | "updatedAt">;
+  profile: User
   setProfile: (profile: User) => void;
 }
 
@@ -14,6 +14,10 @@ export const useProfileStore: UseBoundStore<StoreApi<UseProfileType>> =
       imageUrl: "",
       id: "",
       isVerified: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      role: "USER",
+      password: "",
     },
     setProfile: (profile: User) => set({ profile }),
   }));

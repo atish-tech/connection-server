@@ -12,13 +12,25 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { logout } from "@/serverAction/auth";
+import { useProfileStore } from "@/hooks/use-profile";
 
 export const UserHoverCart = ({ user }: { user: User }) => {
   const { onOpen } = useDrawerAction();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="mt-auto">
-        <User2 className="h-12 w-12 " />
+        {user.imageUrl ? (
+          <div className="object-cover w-full h-full flex items-center justify-center">
+            <img
+              src={user.imageUrl}
+              alt={user.userName}
+              className="h-12 w-12 rounded-full object-cover bg-transparent"
+            />
+          </div>
+        ) : (
+          <User2 className="h-12 w-12 " />
+        )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent

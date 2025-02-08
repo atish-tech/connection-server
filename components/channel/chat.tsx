@@ -27,8 +27,18 @@ export function Chat({ chat }: { chat: any }) {
       key={chat.id}
       className="flex items-center h-full hover:bg-zinc-800 p-3 gap-3 w-full"
     >
-      <User className="bg-transparent/20 p-1 rounded-full h-8 w-8 text-white" />
+      {chat.members.user.imageUrl ? (
+          <div className="bg-transparent/20 p-1 rounded-full h-8 w-8 text-white object-cover flex items-center justify-center">
+            <img
+              src={chat.members.user.imageUrl}
+              alt={chat.members.user.userName}
+              className="h-12 w-12 rounded-full object-cover bg-transparent"
+            />
+          </div>
+        ) : (
+          <User className="bg-transparent/20 p-1 rounded-full h-8 w-8 text-white" />
 
+        )}
       <div>
         <p className="text-lg pb-2 text-zinc-300">
           @ {chat.members.user.userName}
