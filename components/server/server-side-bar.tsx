@@ -11,6 +11,7 @@ import axios from "axios";
 import { ChannelGroupSkelton } from "../skelton/ChannelGroupSkelton";
 import { useProfileStore, UseProfileType } from "@/hooks/use-profile";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { ScrollArea } from "../ui/scroll-area";
 
 export const ServerSideBar = ({ serverId }: { serverId: string }) => {
   const [data, setData] = useState<any>(null);
@@ -61,6 +62,8 @@ export const ServerSideBar = ({ serverId }: { serverId: string }) => {
         memberRole={memberRole?.role}
       />
 
+      <ScrollArea className="h-full w-full">
+
       {/* Text Channel */}
       <TextChannel channel={textChannel} />
 
@@ -73,6 +76,7 @@ export const ServerSideBar = ({ serverId }: { serverId: string }) => {
 
       {/* Video Channel */}
       <VideoChannel user={user} channel={videoChannel} />
+      </ScrollArea>
     </div>
   );
 };
