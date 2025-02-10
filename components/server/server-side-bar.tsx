@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ServerHeader } from "./server-header";
-import { TextChannel } from "./text-channel";
-import { AudioChannel } from "./audio-channel";
-import { VideoChannel } from "./video-channel";
-import { Separator } from "../ui/separator";
+import { Channels } from "./channels"; 
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ChannelGroupSkelton } from "../skelton/ChannelGroupSkelton";
@@ -14,7 +11,13 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { ScrollArea } from "../ui/scroll-area";
 import { Member, User } from "@prisma/client";
 
-export const ServerSideBar = ({ serverId , currentUser}: { serverId: string; currentUser: User }) => {
+export const ServerSideBar = ({
+  serverId,
+  
+}: {
+  serverId: string;
+ 
+}) => {
   const [data, setData] = useState<any>(null);
 
   const router: AppRouterInstance = useRouter();
@@ -53,7 +56,6 @@ export const ServerSideBar = ({ serverId , currentUser}: { serverId: string; cur
 
   return (
     <div className="h-full w-full">
-      {/* Header */}
       <ServerHeader
         server={server}
         serverMember={member}
@@ -63,21 +65,14 @@ export const ServerSideBar = ({ serverId , currentUser}: { serverId: string; cur
         memberRole={memberRole?.role}
       />
 
-      <ScrollArea className="h-full w-full">
-
-      {/* Text Channel */}
-      <TextChannel channel={textChannel} user={currentUser} member={memberRole as Member} />
-
-      <Separator className="bg-zinc-800 h-[2px]" />
-
-      {/* Audio Channel */}
-      <AudioChannel user={user} channel={audioChannel} />
-
-      <Separator className="bg-zinc-800 h-[2px]" />
-
-      {/* Video Channel */}
-      <VideoChannel user={user} channel={videoChannel} />
-      </ScrollArea>
+      <Channels
+        textChannel={textChannel}
+        audioChannel={audioChannel}
+        videoChannel={videoChannel}
+        user={user}
+        member={memberRole as Member}
+        serverId={server.id}
+      />
     </div>
   );
 };

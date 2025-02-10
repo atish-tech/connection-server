@@ -33,7 +33,7 @@ export default async function ServerLayout({
         className="w-full h-full  bg-zinc-900/50"
         defaultSize={20}
       >
-        <ServerSideBar serverId={params.serverId} currentUser={user}/>
+        <ServerSideBar serverId={params.serverId} />
       </ResizablePanel>
 
       <ResizableHandle

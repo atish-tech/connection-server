@@ -11,20 +11,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Channel } from "@prisma/client";
+import { deleteChannel } from "@/serverAction/chennel";
+import { Channel, Member, User } from "@prisma/client";
 import { Trash } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, MouseEvent } from "react";
 
-export function Delete({ channel }: { channel: Channel }) {
+export function Delete({ channel , user, member , serverId}: { channel: Channel; user: User; member: Member, serverId: string}) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
-  // function onclose():void{
-  //     setOpen(!open);
-  // }
+  function onClose() {
+    setOpen(false)
+  }
+
+  const router = useRouter()
+
+  
 
   return (
-    <Dialog>
-      <DialogTrigger>
+    <Dialog  open={open} onOpenChange={setOpen}>
+      <DialogTrigger onClick={(e: MouseEvent<HTMLButtonElement>) => {e.stopPropagation()
+        setOpen(true)
+      }}> 
         <Trash className="w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 transition hidden group-hover:block" />
       </DialogTrigger>
 
@@ -33,6 +42,7 @@ export function Delete({ channel }: { channel: Channel }) {
           <DialogTitle className="text-2xl text-center font-bold">
             Delete Server
           </DialogTitle>
+
           <DialogDescription className="text-center text-zinc-500">
             Are you sure you want to do this? <br />
             <span className="text-indigo-500 font-semibold">
@@ -41,22 +51,30 @@ export function Delete({ channel }: { channel: Channel }) {
             will be permanently deleted.
           </DialogDescription>
         </DialogHeader>
+
         <DialogFooter className="bg-zinc-800 px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <DialogClose>
               <Button
                 disabled={loading}
-                //   onClick={onClose}
+               
                 variant="destructive"
               >
                 Cancel
               </Button>
             </DialogClose>
+
+
+
             <Button
               disabled={loading}
-              //   onClick={onClick}
+              onClick={async () => {await deleteChannel(channel, user, member, serverId )
+                router.refresh();
+                onClose()
+
+              }}
               className="bg-blue-700 hover:bg-blue-900"
-            >
+              >
               Confirm
             </Button>
           </div>
