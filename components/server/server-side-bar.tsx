@@ -12,8 +12,9 @@ import { ChannelGroupSkelton } from "../skelton/ChannelGroupSkelton";
 import { useProfileStore, UseProfileType } from "@/hooks/use-profile";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { ScrollArea } from "../ui/scroll-area";
+import { Member, User } from "@prisma/client";
 
-export const ServerSideBar = ({ serverId }: { serverId: string }) => {
+export const ServerSideBar = ({ serverId , currentUser}: { serverId: string; currentUser: User }) => {
   const [data, setData] = useState<any>(null);
 
   const router: AppRouterInstance = useRouter();
@@ -65,7 +66,7 @@ export const ServerSideBar = ({ serverId }: { serverId: string }) => {
       <ScrollArea className="h-full w-full">
 
       {/* Text Channel */}
-      <TextChannel channel={textChannel} />
+      <TextChannel channel={textChannel} user={currentUser} member={memberRole as Member} />
 
       <Separator className="bg-zinc-800 h-[2px]" />
 
