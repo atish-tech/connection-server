@@ -9,6 +9,7 @@ import { z } from "zod";
 import axios from "axios";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 const inputSchema = z.object({
   userName: z
@@ -28,6 +29,8 @@ export default function () {
   });
   const [loading, setLoading] = useState(false);
 
+  const route = useRouter();
+
   // Handle Subbmit
   const onSubbmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,9 +47,12 @@ export default function () {
       const response = await axios.post("api/auth/register/?type=register", {
         ...data,
       });
-      toast(response.data);
+      toast("Registration Success!");
+
+      route.push("login");
     } catch (error) {
       console.log(error);
+      toast("Somthing went wrong")
     } finally {
       setLoading(false);
     }
