@@ -43,13 +43,15 @@ export function Delete({ channel }: { channel: Channel }) {
         </DialogHeader>
         <DialogFooter className="bg-zinc-800 px-6 py-4">
           <div className="flex items-center justify-between w-full">
-            <Button
-              disabled={loading}
-              //   onClick={onClose}
-              variant="destructive"
-            >
-              Cancel
-            </Button>
+            <DialogClose>
+              <Button
+                disabled={loading}
+                //   onClick={onClose}
+                variant="destructive"
+              >
+                Cancel
+              </Button>
+            </DialogClose>
             <Button
               disabled={loading}
               //   onClick={onClick}
