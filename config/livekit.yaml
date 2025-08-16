@@ -1,0 +1,80 @@
+port: 7880
+bind_addresses:
+  - ""
+
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 60000
+  use_external_ip: true
+  # Configure STUN/TURN servers
+  stun_servers:
+    - stun:coturn:3478
+  turn_servers:
+    - host: coturn
+      port: 3478
+      protocol: udp
+      username: livekit
+      credential: password
+    - host: coturn
+      port: 3478
+      protocol: tcp
+      username: livekit
+      credential: password
+
+redis:
+  address: redis:6379
+  username: ""
+  password: ""
+  db: 0
+
+api:
+  key: devkey
+  secret: secret
+
+# Room settings
+room:
+  enabled_codecs:
+    - mime: audio/opus
+    - mime: video/h264
+    - mime: video/vp8
+    - mime: video/vp9
+  max_participants: 100
+  empty_timeout: 300s
+  departure_timeout: 20s
+
+# Audio settings
+audio:
+  # Enable audio processing
+  enabled: true
+  # Audio levels and quality
+  update_interval: 200ms
+
+# Video settings  
+video:
+  # Enable simulcast for better quality adaptation
+  enabled: true
+  # Hardware acceleration if available
+  hardware_encoder: true
+
+# Logging
+logging:
+  level: info
+  sample_rate: 1
+
+# Metrics and monitoring
+prometheus:
+  port: 6789
+
+# Development settings (disable in production)
+development:
+  disable_strict_config: false
+
+# Security settings
+keys:
+  api_key: devkey
+  api_secret: secret
+
+# Node configuration for clustering
+node:
+  ip: ""
