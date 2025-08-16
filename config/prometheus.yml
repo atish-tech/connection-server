@@ -1,0 +1,46 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # LiveKit metrics
+  - job_name: 'livekit'
+    static_configs:
+      - targets: ['livekit:6789']
+    scrape_interval: 5s
+    metrics_path: /metrics
+
+  # Redis metrics (if redis_exporter is added)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 10s
+
+  # Nginx metrics (if nginx-prometheus-exporter is added)
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:9113']
+    scrape_interval: 10s
+
+  # COTURN metrics (if available)
+  - job_name: 'coturn'
+    static_configs:
+      - targets: ['coturn:3478']
+    scrape_interval: 15s
+
+  # Node.js application metrics (if prometheus client is added)
+  - job_name: 'app'
+    static_configs:
+      - targets: ['app:3001']  # Assuming metrics endpoint on port 3001
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
