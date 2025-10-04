@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPresignedUrl } from "@/utils/minio";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const fileName = req.nextUrl.searchParams.get("fileName");

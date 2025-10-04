@@ -1,6 +1,6 @@
 // import { InitilizedServer } from "@/components/initilized/initilized-server";
 import { InitilizedUser } from "@/components/initilized/initilized-user";
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -8,9 +8,11 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const token = cookies().get("token")?.value || " ";
 
-  if (!token) return redirect("/login");
+  if (!token || token.trim() === '') return redirect("/login");
 
-  const email = await decodeToken(token);
+  const email = await decodeTokenServer(token);
+
+  if (!email) return redirect("/login");
 
   const user = await DB.user.findFirst({
     where: { email },

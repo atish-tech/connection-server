@@ -2,7 +2,7 @@ import { Separator } from "../ui/separator";
 import { ServerList } from "./server-list";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { CreateServer } from "./create-server";
 import { UserHoverCart } from "./user-cart-hover";
@@ -11,9 +11,11 @@ import { LogoAvalibleServer } from "./logo";
 export const Navigation = async () => {
   const token = cookies().get("token")?.value || " ";
 
-  if (!token) return redirect("/login");
+  if (!token || token.trim() === '') return redirect("/login");
 
-  const email = await decodeToken(token);
+  const email = await decodeTokenServer(token);
+
+  if (!email) return redirect("/login");
 
   // find user
   const user = await DB.user.findFirst({ where: { email } });

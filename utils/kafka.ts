@@ -2,9 +2,18 @@ import { Kafka, Producer, Consumer, Message } from 'kafkajs';
 import { ChannelMessageType } from '@prisma/client';
 
 // Kafka client configuration
+// Use different ports for Docker vs external connections
+const getKafkaBroker = () => {
+  if (process.env.KAFKA_BROKER) {
+    return process.env.KAFKA_BROKER;
+  }
+  // Default to external port for development
+  return 'localhost:29092';
+};
+
 const kafka = new Kafka({
   clientId: 'connection-server',
-  brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
+  brokers: [getKafkaBroker()],
   retry: {
     initialRetryTime: 300,
     retries: 10

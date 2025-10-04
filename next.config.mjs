@@ -28,6 +28,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'img.clerk.com' },
       { protocol: 'https', hostname: 'xwbmaxsmkzdbvmgvbqqo.supabase.co' },
       { protocol: 'http', hostname: 'localhost' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
   reactStrictMode: true,

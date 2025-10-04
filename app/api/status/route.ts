@@ -27,9 +27,17 @@ export async function GET() {
   // Check Kafka if enabled
   if (process.env.KAFKA_AVAILABLE === 'true') {
     try {
+      // Use correct broker for external connections
+      const getKafkaBroker = () => {
+        if (process.env.KAFKA_BROKER) {
+          return process.env.KAFKA_BROKER;
+        }
+        return 'localhost:29092';
+      };
+
       const kafka = new Kafka({
         clientId: 'connection-server-status',
-        brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
+        brokers: [getKafkaBroker()],
       });
       
       const admin = kafka.admin();

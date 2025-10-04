@@ -1,5 +1,5 @@
 import { ServerToast } from "@/components/util/server-toast";
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -11,7 +11,7 @@ const InviteCode = async ({ params }: { params: { inviteCode: string } }) => {
 
   if (!token) return redirect("/login");
 
-  const email = await decodeToken(token);
+  const email = await decodeTokenServer(token);
 
   const user = await DB.user.findFirst({
     where: { email },

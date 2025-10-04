@@ -4,7 +4,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { User } from "@prisma/client";
 import { cookies } from "next/headers";
@@ -19,9 +19,11 @@ export default async function ServerLayout({
 }) {
   const token: string = cookies().get("token")?.value || " ";
 
-  if (!token) return redirect("/login");
+  if (!token || token.trim() === '') return redirect("/login");
 
-  const email = await decodeToken(token);
+  const email = await decodeTokenServer(token);
+
+  if (!email) return redirect("/login");
 
   const user: User | null = await DB.user.findFirst({ where: { email } });
 

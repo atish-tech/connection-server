@@ -11,7 +11,7 @@ interface SocketStore {
   disconnect: () => void;
   joinServer: (serverId: string) => void;
   joinChannel: (serverId: string, channelId: number) => void;
-  emitTyping: (channelId: number) => void;
+  emitTyping: (serverId: string, channelId: number) => void;
 }
 
 export const useSocketStore = create<SocketStore>((set, get) => ({
@@ -44,66 +44,44 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
       return; // Don't proceed with invalid token
     }
     
+    // Check if already connected or connecting
+    const { socket: existingSocket, isConnected } = get();
+    if (existingSocket && (isConnected || existingSocket.connected)) {
+      console.log('Socket already connected or connecting, skipping new connection');
+      return;
+    }
+    
     // Always disconnect previous socket if it exists
-    const prevSocket = get().socket;
-    if (prevSocket) {
+    if (existingSocket) {
       console.log('Disconnecting previous socket connection');
-      prevSocket.disconnect();
+      existingSocket.disconnect();
     }
 
-    // In development, we use the Next.js API route
-    // In production, we can use the direct socket connection
-    const isDev = process.env.NODE_ENV === 'development';
-    let socketOptions: any;
-    let socketUrl: string;
+    // Always connect directly to the main socket server
+    // The main server.js initializes the socket server on the same port
+    const socketUrl = typeof window !== 'undefined' ? 
+      window.location.hostname + (window.location.port ? `:${window.location.port}` : '') : 
+      'localhost:3000';
     
-    if (isDev) {
-      // Use the Next.js API route for socket.io
-      socketOptions = {
-        path: '/api/socket',
-        auth: { token },
-        reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
-        timeout: 20000,
-        autoConnect: true,
-        transports: ['websocket', 'polling'],
-      };
-      socketUrl = '';
-      console.log('Connecting to development socket server via API route');
-    } else {
-      // Direct connection to socket server in production
-      socketUrl = typeof window !== 'undefined' ? 
-        window.location.hostname + (window.location.port ? `:${window.location.port}` : '') : 
-        'localhost:3000';
-      socketOptions = {
-        auth: { token },
-        reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
-        timeout: 20000,
-        autoConnect: true,
-        transports: ['websocket', 'polling'],
-      };
-      console.log('Connecting to production socket server at:', socketUrl);
-    }
+    const socketOptions = {
+      auth: { token },
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
+      autoConnect: true,
+      transports: ['polling', 'websocket'], // Start with polling, upgrade to websocket
+    };
+    
+    console.log('Connecting to socket server at:', socketUrl);
     
     // Connect to socket server - with debug logging
     console.log('Socket connection options:', socketOptions);
-    console.log('Socket connecting to:', isDev ? 'API route' : `http://${socketUrl}`);
+    console.log('Socket connecting to:', `http://${socketUrl}`);
     
-    // Force using polling first, then upgrade to websocket
-    const socket = isDev 
-      ? io({
-          ...socketOptions,
-          transports: ['polling', 'websocket']
-        }) 
-      : io(`http://${socketUrl}`, {
-          ...socketOptions,
-          transports: ['polling', 'websocket']
-        });
+    // Connect directly to the main socket server
+    const socket = io(`http://${socketUrl}`, socketOptions);
     
     socket.on('connect', () => {
       console.log('Socket connected!');
@@ -157,21 +135,21 @@ export const useSocketStore = create<SocketStore>((set, get) => ({
   joinServer: (serverId: string) => {
     const { socket, isConnected } = get();
     if (socket && isConnected) {
-      socket.emit('server:join', serverId);
-    }
+      socket.emit('join_server', { serverId });
+    } 
   },
   
   joinChannel: (serverId: string, channelId: number) => {
     const { socket, isConnected } = get();
     if (socket && isConnected) {
-      socket.emit('channel:join', { serverId, channelId });
+      socket.emit('join_channel', { serverId, channelId });
     }
   },
   
-  emitTyping: (channelId: number) => {
+  emitTyping: (serverId: string, channelId: number) => {
     const { socket, isConnected } = get();
     if (socket && isConnected) {
-      socket.emit('user:typing', { channelId });
+      socket.emit('user_typing', { serverId, channelId });
     }
   },
 }));

@@ -1,4 +1,4 @@
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { StatusCode } from "@/lib/status";
 import { MemberRole } from "@prisma/client";
@@ -13,7 +13,7 @@ export async function PUT(req: Request) {
 
         if (!token) return new NextResponse("User Not verified", { status: StatusCode.BadRequest });
 
-        const email = await decodeToken(token);
+        const email = await decodeTokenServer(token);
 
         const body = await req.json();
 

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { minioClient, MINIO_BUCKET_NAME, getPresignedUrl, deleteObject } from "@/utils/minio";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     // Parse the form data

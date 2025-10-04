@@ -1,4 +1,4 @@
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { StatusCode } from "@/lib/status";
 import { MemberRole } from "@prisma/client";
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
         if (!token) return new NextResponse("Bad Request", { status: StatusCode.BadRequest });
 
-        const email = await decodeToken(token);
+        const email = await decodeTokenServer(token);
 
         const body = await req.json();
 
@@ -73,7 +73,7 @@ export async function GET(req: Request) {
 
         if (!token) return new NextResponse("Bad Request", { status: StatusCode.BadRequest });
 
-        const email = await decodeToken(token);
+        const email = await decodeTokenServer(token);
 
         const user = await DB.user.findFirst({ where: { email } });
 
@@ -108,7 +108,7 @@ export async function DELETE(req: Request) {
 
         if (!token) return new NextResponse("Bad Request", { status: StatusCode.BadRequest });
 
-        const email = await decodeToken(token);
+        const email = await decodeTokenServer(token);
 
         const user = await DB.user.findFirst({ where: { email } });
 
@@ -140,7 +140,7 @@ export async function PUT(req: Request) {
 
         if (!token) return new NextResponse("Bad Request", { status: StatusCode.BadRequest });
 
-        const email = await decodeToken(token);
+        const email = await decodeTokenServer(token);
 
         const user = await DB.user.findFirst({ where: { email } });
 

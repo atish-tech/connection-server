@@ -2,15 +2,15 @@
 
 import { useSheetAction } from "@/hooks/sheet";
 import { Hash, Server, Users } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { OnlineStatusIndicator } from "../server/online-status-indicator";
 import { Separator } from "@/components/ui/separator";
 
 export const ChannelChatHeader = ({ serverId }: { serverId: string }) => {
-  const params = useSearchParams();
+  const params: ReadonlyURLSearchParams | null = useSearchParams();
 
-  const channelName = params?.get("channelName");
-  const channelId = params?.get("channelId") ? parseInt(params?.get("channelId")!, 10) : undefined;
+  const channelName: string | null | undefined = params?.get("channelName");
+  const channelId: number | undefined = params?.get("channelId") ? parseInt(params?.get("channelId")!, 10) : undefined;
 
   const { onOpen } = useSheetAction();
 

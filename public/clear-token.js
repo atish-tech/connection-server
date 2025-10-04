@@ -11,7 +11,7 @@
     console.log('Removing invalid token from localStorage');
     localStorage.removeItem('token');
     
-    // Redirect to token reset page
-    window.location.href = '/reset-token';
+    // Redirect to main page
+    window.location.href = '/';
   }
 })();

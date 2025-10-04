@@ -10,7 +10,7 @@ import {
   getOnlineUserCount
 } from './redis';
 import { DB as prisma } from '@/lib/prisma';
-import { decodeToken } from '@/config/decodeToken';
+import { decodeTokenServer } from '@/lib/jwt-server';
 
 // Map to store consumer instances
 const consumers: Record<string, Consumer> = {};
@@ -24,9 +24,13 @@ export function initializeSocketServer(httpServer: HttpServer): Server {
     cors: {
       origin: '*',
       methods: ['GET', 'POST'],
+      credentials: true,
+      allowedHeaders: ['content-type', 'authorization'],
     },
-    transports: ['websocket', 'polling'],
+    transports: ['polling', 'websocket'], // Start with polling, upgrade to websocket
     pingTimeout: 60000,
+    connectTimeout: 45000,
+    allowEIO3: true, // Allow Engine.IO v3 client to connect
   });
 
   // Connection event handling
@@ -40,7 +44,7 @@ export function initializeSocketServer(httpServer: HttpServer): Server {
 
     try {
       // Decode JWT token
-      const decoded = await decodeToken(token);
+      const decoded = await decodeTokenServer(token);
       if (!decoded || !decoded.id) {
         socket.disconnect();
         return;

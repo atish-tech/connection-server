@@ -1,4 +1,4 @@
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { ChannelType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   if (!token)
     return NextResponse.json({ message: "Unauthorized", status: 401 });
 
-  const email = await decodeToken(token);
+  const email = await decodeTokenServer(token);
 
   const user = await DB.user.findFirst({
     where: { email },

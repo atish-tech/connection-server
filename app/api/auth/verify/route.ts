@@ -1,4 +1,4 @@
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { StatusCode } from "@/lib/status";
 import {  NextResponse } from "next/server";
@@ -7,7 +7,7 @@ import {  NextResponse } from "next/server";
 export async function POST(req: Request) {
     const token = (new URL(req.url).searchParams.get("token")) || "";
 
-    const decode:any = await decodeToken(token);
+    const decode:any = await decodeTokenServer(token);
 
     if(!decode) {
         return new NextResponse("Token Expire" , {status : StatusCode.BadRequest})

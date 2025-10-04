@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { User } from '@prisma/client';
-import { Socket } from 'socket.io-client';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { UserRound, Users } from 'lucide-react';
@@ -18,8 +16,6 @@ interface OnlineStatusIndicatorProps {
 export function OnlineStatusIndicator({ serverId, channelId }: OnlineStatusIndicatorProps) {
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [onlineCount, setOnlineCount] = useState<number>(0);
-  const [showOnlineList, setShowOnlineList] = useState(false);
-  const router = useRouter();
 
   // Use the socket store for connection management
   const { socket, isConnected, connect, joinServer, joinChannel } = useSocketStore();
@@ -35,6 +31,7 @@ export function OnlineStatusIndicator({ serverId, channelId }: OnlineStatusIndic
     // Clean up function is handled by the component unmount
     return () => {
       // Socket instance is maintained by the store
+     
     };
   }, [connect]);
   

@@ -33,76 +33,119 @@ function initializeSocketServer(server) {
   io = new Server(server, {
     cors: {
       origin: '*',
-      methods: ['GET', 'POST']
-    }
+      methods: ['GET', 'POST'],
+      credentials: true,
+      allowedHeaders: ['content-type', 'authorization'],
+    },
+    transports: ['polling', 'websocket'], // Start with polling, upgrade to websocket
+    pingTimeout: 60000,
+    connectTimeout: 45000,
+    allowEIO3: true, // Allow Engine.IO v3 client to connect
   });
 
   // Handle connection events
-  io.on(EVENTS.CONNECT, (socket) => {
+  io.on(EVENTS.CONNECT, async (socket) => {
     console.log(`Client connected: ${socket.id}`);
     
-    // Handle authentication
-    const userId = socket.handshake.auth.userId;
-    if (!userId) {
-      console.warn(`Socket ${socket.id} connected without a userId`);
-      return;
-    }
-
-    // Store user's socket ID in Redis for tracking online status
-    redis.setUserStatus(userId, 'online', socket.id).catch(console.error);
-    
-    // Broadcast user's online status
-    socket.broadcast.emit(EVENTS.USER_ONLINE, { userId });
-
-    // Handle server joins
-    socket.on(EVENTS.JOIN_SERVER, (data) => {
-      const { serverId } = data;
-      if (serverId) {
-        socket.join(`server:${serverId}`);
-        console.log(`User ${userId} joined server ${serverId}`);
+    try {
+      // Extract user info from socket handshake auth
+      const token = socket.handshake.auth.token;
+      
+      if (!token) {
+        console.log('No token provided, disconnecting socket');
+        socket.disconnect();
+        return;
       }
-    });
 
-    // Handle channel joins
-    socket.on(EVENTS.JOIN_CHANNEL, (data) => {
-      const { serverId, channelId } = data;
-      if (serverId && channelId) {
-        socket.join(`channel:${serverId}:${channelId}`);
-        console.log(`User ${userId} joined channel ${channelId} in server ${serverId}`);
-      }
-    });
-
-    // Handle typing events
-    socket.on(EVENTS.USER_TYPING, async (data) => {
-      const { serverId, channelId } = data;
-      if (serverId && channelId) {
-        // Send to Kafka
-        try {
-          await kafka.sendUserTyping(userId, serverId, channelId);
-        } catch (error) {
-          console.error('Error sending typing event to Kafka:', error);
-          
-          // Fallback: broadcast directly to channel members
-          socket.to(`channel:${serverId}:${channelId}`).emit(EVENTS.USER_TYPING, {
-            userId,
-            serverId,
-            channelId,
-            timestamp: new Date().toISOString()
-          });
+      // Decode JWT token to get the actual user ID
+      let userId;
+      try {
+        // Decode JWT token (without verification for now)
+        const tokenParts = token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
+          userId = payload.id || payload.userId || payload.sub;
+        } else {
+          console.log('Invalid JWT token format');
+          socket.disconnect();
+          return;
         }
+      } catch (error) {
+        console.error('Error decoding JWT token:', error);
+        socket.disconnect();
+        return;
       }
-    });
+      
+      if (!userId) {
+        console.log('Invalid token, disconnecting socket');
+        socket.disconnect();
+        return;
+      }
 
-    // Handle disconnection
-    socket.on(EVENTS.DISCONNECT, async () => {
-      console.log(`Client disconnected: ${socket.id}`);
+      // Store user's socket ID in Redis for tracking online status
+      await redis.setUserStatus(userId, 'online', socket.id).catch((error) => {
+        console.error('Redis error:', error);
+      });
       
-      // Update Redis with offline status
-      await redis.setUserStatus(userId, 'offline').catch(console.error);
+      // Broadcast user's online status
+      socket.broadcast.emit(EVENTS.USER_ONLINE, { userId });
+
+      // Handle server joins
+      socket.on(EVENTS.JOIN_SERVER, (data) => {
+        const { serverId } = data;
+        if (serverId) {
+          socket.join(`server:${serverId}`);
+          console.log(`User ${userId} joined server ${serverId}`);
+        }
+      });
+
+      // Handle channel joins
+      socket.on(EVENTS.JOIN_CHANNEL, (data) => {
+        const { serverId, channelId } = data;
+        if (serverId && channelId) {
+          socket.join(`channel:${serverId}:${channelId}`);
+          console.log(`User ${userId} joined channel ${channelId} in server ${serverId}`);
+        }
+      });
+
+      // Handle typing events
+      socket.on(EVENTS.USER_TYPING, async (data) => {
+        const { serverId, channelId } = data;
+        if (serverId && channelId) {
+          // Send to Kafka
+          try {
+            await kafka.sendUserTyping(userId, serverId, channelId);
+          } catch (error) {
+            console.error('Error sending typing event to Kafka:', error);
+            
+            // Fallback: broadcast directly to channel members
+            socket.to(`channel:${serverId}:${channelId}`).emit(EVENTS.USER_TYPING, {
+              userId,
+              serverId,
+              channelId,
+              timestamp: new Date().toISOString()
+            });
+          }
+        }
+      });
+
+      // Handle disconnection
+      socket.on(EVENTS.DISCONNECT, async () => {
+        console.log(`Client disconnected: ${socket.id}`);
+        
+        // Update Redis with offline status
+        await redis.setUserStatus(userId, 'offline').catch((error) => {
+          console.error('Redis error during disconnect:', error);
+        });
+        
+        // Broadcast offline status
+        socket.broadcast.emit(EVENTS.USER_OFFLINE, { userId });
+      });
       
-      // Broadcast offline status
-      socket.broadcast.emit(EVENTS.USER_OFFLINE, { userId });
-    });
+    } catch (error) {
+      console.error('Socket connection error:', error);
+      socket.disconnect();
+    }
   });
 
   console.log('Socket.IO server initialized');

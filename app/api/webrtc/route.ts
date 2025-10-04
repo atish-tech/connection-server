@@ -1,4 +1,4 @@
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { StatusCode } from "@/lib/status";
 import { AccessToken } from "livekit-server-sdk";
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   if (!token) return new NextResponse("User Not verified", { status: StatusCode.BadRequest });
 
-  const email = await decodeToken(token);
+  const email = await decodeTokenServer(token);
 
   const user = await DB.user.findFirst({ where: { email } });
 

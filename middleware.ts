@@ -1,28 +1,34 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { decodeToken } from "./config/decodeToken";
-import { redirect } from "next/navigation";
-import { StatusCode } from "./lib/status";
-import { DB } from "./lib/prisma";
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};
 
 export async function middleware(request: NextRequest) {
-    // if(request.nextUrl.pathname.startsWith("/login") && ! request.nextUrl.pathname.startsWith("/register")) {
-    const token = cookies().get("token")?.value || ""; // Provide a default value for token
-    const email = await decodeToken(token);
+    // Skip middleware for API routes and static files
+    if (request.nextUrl.pathname.startsWith('/api/') || 
+        request.nextUrl.pathname.startsWith('/_next/') ||
+        request.nextUrl.pathname === '/favicon.ico') {
+        return NextResponse.next();
+    }
 
-    if (request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")) {
+    // For login, register, and verify pages, allow access
+    if (request.nextUrl.pathname.startsWith("/login") || 
+        request.nextUrl.pathname.startsWith("/register") ||
+        request.nextUrl.pathname.startsWith("/verify")) {
+        return NextResponse.next();
     }
-    else if (!email) {
-        NextResponse.redirect(new URL("/login", request.url))
-        return;
 
-    }
-    else {
-        // const user = await DB.user.findFirst({where: {email}});
-        // console.log(user);
-        // request.email = email;
-    }
-    // console.log(email);
-    // return new NextResponse("User Unothrized" , {status: StatusCode.BadRequest});
-    // }
+    // For all other pages, let the components handle authentication
+    // This prevents Edge Runtime issues with JWT
+    return NextResponse.next();
 }

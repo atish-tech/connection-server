@@ -13,13 +13,20 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Initialize the socket connection
     const initSocket = async () => {
-      // First check if we have an invalid token stored
-      const storedToken = localStorage.getItem('token');
-      if (storedToken === process.env.JWT_SECRET || 
+      // Check if we have a valid token stored
+      let storedToken = localStorage.getItem('token');
+      
+      // If no token or invalid token, generate a new one
+      if (!storedToken || 
+          storedToken === process.env.JWT_SECRET || 
           storedToken === '44196dd4a6e7f9c17683e50ae8128fc110f353987fdd09a208a19feef1195f5b') {
-        // Remove invalid token
-        console.log('Removing invalid token from localStorage');
-        localStorage.removeItem('token');
+        
+        if (storedToken) {
+          console.log('Removing invalid token from localStorage');
+          localStorage.removeItem('token');
+        } else {
+          console.log('No token found, generating new one');
+        }
         
         // Get a new token
         try {
@@ -29,11 +36,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             if (tokenData.token) {
               console.log('Stored new token in localStorage');
               localStorage.setItem('token', tokenData.token);
+              storedToken = tokenData.token;
               toast.success('Generated new authentication token');
             }
           }
         } catch (tokenError) {
           console.error('Failed to get new token:', tokenError);
+          toast.error('Failed to generate authentication token');
+          return;
         }
       }
       
@@ -54,44 +64,25 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
           console.warn('Status check failed:', statusError);
         }
         
-        // Ensure the socket endpoint is ready - with retry logic
-        let socketEndpointReady = false;
-        let attempts = 0;
-        
-        while (!socketEndpointReady && attempts < 3) {
-          try {
-            const response = await fetch('/api/socket');
-            if (response.ok) {
-              socketEndpointReady = true;
-              console.log('Socket API ready on attempt', attempts + 1);
-            } else {
-              console.warn(`Socket API not ready (${response.status}), retrying...`);
-              await new Promise(r => setTimeout(r, 2000)); // Wait 2 seconds
-            }
-          } catch (fetchError) {
-            console.warn('Socket API fetch failed, retrying...', fetchError);
-            await new Promise(r => setTimeout(r, 2000)); // Wait 2 seconds
+        // Check if the main server is running by testing the status endpoint
+        try {
+          const statusResponse = await fetch('/api/status');
+          if (!statusResponse.ok) {
+            console.warn('Server status check failed, but continuing with socket connection');
           }
-          attempts++;
+        } catch (statusError) {
+          console.warn('Server status check failed, but continuing with socket connection:', statusError);
         }
         
-        if (!socketEndpointReady) {
-          console.error('Socket API route not available after retries');
-          toast.error("Cannot connect to socket server. Please refresh the page.");
+        // Connect to socket server with the token we have
+        if (!storedToken) {
+          console.warn('No token available for socket authentication');
+          toast.error("Authentication required. Please refresh the page.");
           return;
         }
         
-        // Get token from local storage
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.warn('No token found for socket authentication');
-          toast.error("Authentication required. Please log in again.");
-          return;
-        }
-        
-        // Connect to socket server
         console.log('Initializing socket connection with token');
-        connect(token);
+        connect(storedToken);
       } catch (error) {
         console.error('Failed to initialize socket:', error);
         toast.error("Connection error. Please reload the page.");
@@ -165,9 +156,26 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let reconnectTimer: NodeJS.Timeout;
     
-    if (!isConnected) {
-      reconnectTimer = setInterval(() => {
-        const token = localStorage.getItem('token');
+    if (!isConnected && reconnectAttempts < 5) { // Limit to 5 attempts
+      reconnectTimer = setInterval(async () => {
+        let token = localStorage.getItem('token');
+        
+        // If no token, try to get a new one
+        if (!token) {
+          try {
+            const tokenResponse = await fetch('/api/auth/token');
+            if (tokenResponse.ok) {
+              const tokenData = await tokenResponse.json();
+              if (tokenData.token) {
+                localStorage.setItem('token', tokenData.token);
+                token = tokenData.token;
+              }
+            }
+          } catch (error) {
+            console.error('Failed to get token for reconnection:', error);
+          }
+        }
+        
         if (token) {
           setReconnectAttempts(prev => prev + 1);
           console.log(`Reconnect attempt ${reconnectAttempts + 1}`);
@@ -178,7 +186,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             toast.info(`Attempting to reconnect... (Try ${reconnectAttempts + 1})`);
           }
         }
-      }, 5000); // Try every 5 seconds
+      }, 10000); // Try every 10 seconds instead of 5
     }
     
     return () => {

@@ -1,4 +1,4 @@
-import { decodeToken } from "@/config/decodeToken";
+import { decodeTokenServer } from "@/lib/jwt-server";
 import { DB } from "@/lib/prisma";
 import { StatusCode } from "@/lib/status";
 import { create } from "domain";
@@ -13,7 +13,7 @@ export async function POST(req:Request , { params }: { params: { inviteCode: str
 
         if (!token) return new NextResponse("Bad Request", { status: StatusCode.BadRequest });
 
-        const email = await decodeToken(token);
+        const email = await decodeTokenServer(token);
 
         const body = await req.body;
 
