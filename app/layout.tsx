@@ -4,6 +4,7 @@ import "./globals.css";
 import "@uploadthing/react/styles.css";
 import { DrawerProvider } from "@/components/provider/drawer-provider";
 import { SheetProvider } from "@/components/provider/SheetProvider";
+import SocketProvider from "@/components/provider/socket-provider";
 import Toaster from "@/components/custom-ui/Toast";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,18 +23,18 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning={true}>
       <head>
         <meta charSet="utf-8" />
+        <script src="/clear-token.js" defer></script>
       </head>
 
       <body
         className={`${inter.className} bg-zinc-900 h-screen w-screen text-zinc-100`}
       >
-        <DrawerProvider />
-
-        <SheetProvider />
-
-        {children}
-
-        <Toaster />
+        <SocketProvider>
+          <DrawerProvider />
+          <SheetProvider />
+          {children}
+          <Toaster />
+        </SocketProvider>
       </body>
     </html>
   );

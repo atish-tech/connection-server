@@ -6,6 +6,7 @@ import {
   Loader,
   SendHorizonal,
   Smile,
+  Video,
 } from "lucide-react";
 import { useState } from "react";
 import data from "@emoji-mart/data";
@@ -34,19 +35,34 @@ export const SendMessage = ({ channelId, serverId }: SendMessageProps) => {
           <File />
         </PopoverTrigger>
         <PopoverContent
-          className="bg-zinc-800 text-white border-none w-fit p-8"
+          className="bg-zinc-800 text-white border-none w-fit p-6 flex gap-5"
           side="top"
         >
-          <ImageIcon
-            className="h-8 w-8 cursor-pointer m-5 hover:text-zinc-500"
-            onClick={() =>
-              onOpen("sendImage", { data: { channelId, serverId } })
-            }
-          />
-          {/* <Folder
-            className="h-8 w-8 cursor-pointer m-5 hover:text-zinc-500"
-            onClick={() => onOpen("sendPdf", { data: { channelId, serverId } })}
-          /> */}
+          <div className="flex flex-col items-center">
+            <ImageIcon
+              className="h-8 w-8 cursor-pointer hover:text-zinc-500"
+              onClick={() =>
+                onOpen("sendImage", { data: { channelId, serverId } })
+              }
+            />
+            <span className="text-xs mt-1">Image</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <Video
+              className="h-8 w-8 cursor-pointer hover:text-zinc-500"
+              onClick={() =>
+                onOpen("sendVideo", { data: { channelId, serverId } })
+              }
+            />
+            <span className="text-xs mt-1">Video</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <Folder
+              className="h-8 w-8 cursor-pointer hover:text-zinc-500"
+              onClick={() => onOpen("sendPdf", { data: { channelId, serverId } })}
+            />
+            <span className="text-xs mt-1">PDF</span>
+          </div>
         </PopoverContent>
       </Popover>
 

@@ -6,7 +6,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader } from "lucide-react";
-import { UploadImage } from "./upload-image";
 import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -26,7 +25,7 @@ export const SendMessageDrawer = () => {
   return (
     <Dialog
       open={isOpen && type === "sendImage"}
-      onOpenChange={() => onClose()}
+      onOpenChange={onClose}
     >
       <DialogContent className="bg-zinc-800 text-white border-none">
         {/* title */}
@@ -35,7 +34,6 @@ export const SendMessageDrawer = () => {
         </DialogHeader>
 
         {/* upload image */}
-        <UploadImage setImageUrl={setImageUrl} imageUrl={imageUrl} />
 
         {/* Send image to the channel */}
         <Button

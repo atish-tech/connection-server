@@ -6,7 +6,7 @@ import { Hash, Mic, Pencil, Trash, Video } from "lucide-react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams, useRouter } from "next/navigation";
-import { Delete } from "../action/channel/delete";
+import { Delete } from "../channel/delete";
 import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
 

@@ -1,28 +1,38 @@
-# Step 1: Use an official Node.js image as the base
 FROM node:20-alpine
 
-# Install OpenSSL 1.1
-RUN apk add --no-cache openssl1.1-compat
-
-# Step 2: Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Step 3: Copy package.json and package-lock.json or pnpm-lock.yaml
+# Install dependencies for init script
+RUN apk add --no-cache netcat-openbsd
+
+# Install dependencies first (for better caching)
 COPY package*.json ./
-COPY pnpm-lock.yaml ./ 
+RUN npm ci
 
-# Step 4: Install dependencies
-RUN npm install -g pnpm
-RUN pnpm install --shamefully-hoist
+# Install Babel dependencies for TS support in scripts
+RUN npm install --save-dev @babel/register @babel/preset-env @babel/preset-typescript
 
-# Step 5: Copy the rest of the application code
+# Copy project files
 COPY . .
 
-# Step 6: Build the application
-RUN npm run build
+# Make init script executable
+RUN chmod +x docker-init.sh
 
-# Step 7: Expose the port the app runs on
+# Generate Prisma client
+RUN npx prisma generate
+
+# Set environment variables
+ENV PORT 3000
+
+# Skip build in development mode
+ENV NODE_ENV development
+
+# Expose port
 EXPOSE 3000
 
-# Step 8: Define the command to start the application
-CMD ["node", ".next/standalone/server.js"]
+# Use init script to ensure services are available
+ENTRYPOINT ["./docker-init.sh"]
+
+# Start the application in development mode
+CMD ["npm", "run", "dev:server"]

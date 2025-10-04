@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  swcMinify: true,
   webpack: (config) => {
     config.externals.push({
       "utf-8-validate": "commonjs utf-8-validate",
@@ -25,7 +26,8 @@ const nextConfig = {
       { protocol: 'https', hostname: 'utfs.io' },
       { protocol: 'https', hostname: 'clerk.com' },
       { protocol: 'https', hostname: 'img.clerk.com' },
-      { protocol: 'https', hostname: 'xwbmaxsmkzdbvmgvbqqo.supabase.co' }
+      { protocol: 'https', hostname: 'xwbmaxsmkzdbvmgvbqqo.supabase.co' },
+      { protocol: 'http', hostname: 'localhost' },
     ],
   },
   reactStrictMode: true,

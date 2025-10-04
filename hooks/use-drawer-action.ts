@@ -10,6 +10,7 @@ export type DrawerActionType =
   | "deleteServer"
   | "leaveServer"
   | "sendImage"
+  | "sendVideo"
   | "sendPdf"
   | "editProfile";
 

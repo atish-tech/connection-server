@@ -5,7 +5,6 @@ import { StatusCode } from "@/lib/status";
 import { verifyEmail } from "@/components/auth/email";
 import { cookies } from "next/headers";
 import { getToken } from "@/config/generateToken";
-import { JwtPayload } from "jsonwebtoken";
 
 interface RequestBody {
   userName: string;

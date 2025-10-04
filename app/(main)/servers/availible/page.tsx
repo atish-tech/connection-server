@@ -8,7 +8,6 @@ const AvailibleServer = async () => {
     where: {},
     include: { users: { select: { email: true, userName: true } } },
   });
-  //   console.log(server);
 
   return (
     <div className="w-full h-full">

@@ -1,7 +1,7 @@
 import { decodeToken } from "@/config/decodeToken";
 import { DB } from "@/lib/prisma";
 import { StatusCode } from "@/lib/status";
-import { ChannelType, MemberRole } from "@prisma/client";
+import { MemberRole } from "@prisma/client";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { string, z } from "zod";

@@ -1,6 +1,37 @@
+# Versioning and metadata
+.git
+.gitignore
+.dockerignore
+
+# Build dependencies
 node_modules
-.next
 dist
+.next
+.turbo
+build
+
+# Environment (contains sensitive data)
+.env
+.env.*
+!.env.example
+
+# Files not required for production
+README.md
+**/README.md
+**/CHANGELOG.md
+**/docker-compose*
+Dockerfile*
+LICENSE
+.eslintrc.json
+.prettierrc
+.vscode
+coverage
+.github
+.husky
+
+# Misc
 .DS_Store
+npm-debug.log
+yarn-debug.log
+yarn-error.log
 *.log
-.env.local

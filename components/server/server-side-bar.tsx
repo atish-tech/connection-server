@@ -2,22 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { ServerHeader } from "./server-header";
-import { Channels } from "./channels"; 
+import { Channels } from "./channels";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ChannelGroupSkelton } from "../skelton/ChannelGroupSkelton";
 import { useProfileStore, UseProfileType } from "@/hooks/use-profile";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { ScrollArea } from "../ui/scroll-area";
-import { Member, User } from "@prisma/client";
+import { Member } from "@prisma/client";
+import { OnlineStatusIndicator } from "./online-status-indicator";
+import { Separator } from "@/components/ui/separator";
 
-export const ServerSideBar = ({
-  serverId,
-  
-}: {
-  serverId: string;
- 
-}) => {
+export const ServerSideBar = ({ serverId }: { serverId: string }) => {
   const [data, setData] = useState<any>(null);
 
   const router: AppRouterInstance = useRouter();
@@ -64,6 +59,10 @@ export const ServerSideBar = ({
         serverName={server?.name}
         memberRole={memberRole?.role}
       />
+      
+      
+      
+      <Separator className="bg-zinc-700 my-2 h-[1px]" />
 
       <Channels
         textChannel={textChannel}

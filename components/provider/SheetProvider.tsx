@@ -1,5 +1,6 @@
 "use client";
-import { ServerSideBarMobile } from "../action/server-sidebar-mobile";
+
+import { ServerSideBarMobile } from "../server/server-sidebar-mobile";
 
 export const SheetProvider = () => {
   return (

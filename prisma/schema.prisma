@@ -95,6 +95,7 @@ enum ChannelMessageType {
   TEXT
   IMAGE
   PDF
+  VIDEO
 }
 model ChannelMessage {
   id        String  @id @default(uuid())

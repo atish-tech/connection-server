@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader } from "lucide-react";
-import { UploadImage } from "./upload-image";
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -53,7 +52,7 @@ export const SendPdfDrawer = () => {
   };
 
   return (
-    <Dialog open={drawerOpen} onOpenChange={() => onClose()}>
+    <Dialog open={drawerOpen} onOpenChange={onClose}>
       <DialogContent className="bg-zinc-800 text-white border-none">
         {/* title */}
         <DialogHeader>
@@ -61,7 +60,6 @@ export const SendPdfDrawer = () => {
         </DialogHeader>
 
         {/* upload image */}
-        <UploadImage setImageUrl={setImageUrl} imageUrl={imageUrl} />
 
         {/* Send image to the channel */}
         <Button

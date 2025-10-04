@@ -1,28 +1,26 @@
 "use client";
 
-import { CreateChannelDrawer } from "../action/create-channel";
-import { CreateServerDrawer } from "../action/create-server-drawer";
-import { DeleteServer } from "../action/delete-server";
+import { CreateChannelDrawer } from "../channel/create-channel";
+import { DeleteServer } from "../server/delete-server";
 import { EditProfileDrawer } from "../action/edit-profile-drawer";
-import { EditServer } from "../action/edit-server";
-import { InvitePeople } from "../action/invite-people";
-import { LeaveServer } from "../action/leave-server";
-import { SendMessageDrawer } from "../action/send-image-drawer";
-import { SendPdfDrawer } from "../action/send-pdf-drawer";
-import { ServerMembers } from "../action/server-member";
+import { InvitePeople } from "../server/invite-people";
+import { LeaveServer } from "../server/leave-server";
+// File uploads are now handled directly in the message input
+import { ServerMembers } from "../server/server-member";
+import { EditServer } from "../server/edit-server";
+import { CreateServer } from "../server/create-server";
 
 export const DrawerProvider = () => {
   return (
     <>
-      <CreateServerDrawer />
+      <CreateServer />
       <CreateChannelDrawer />
       <InvitePeople />
       <ServerMembers />
       <EditServer />
       <DeleteServer />
       <LeaveServer />
-      <SendMessageDrawer />
-      <SendPdfDrawer />
+      {/* File uploads are now handled directly in message input */}
       <EditProfileDrawer />
     </>
   );

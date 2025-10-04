@@ -1,13 +1,11 @@
 "use client";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DialogWrapper } from "@/components/ui/dialog-wrapper";
 import { Loader } from "lucide-react";
-import { UploadImage } from "./upload-image";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -74,8 +72,10 @@ export const EditProfileDrawer = () => {
   };
 
   return (
-    <Dialog open={drawerOpen} onOpenChange={() => onClose()}>
-      <DialogContent className="bg-zinc-800 text-white border-none">
+    <DialogWrapper 
+      open={drawerOpen} 
+      onClose={onClose}
+      className="bg-zinc-800 text-white border-none">
         {/* title */}
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
@@ -109,7 +109,6 @@ export const EditProfileDrawer = () => {
         >
           {loading ? <Loader className="animate-spin" /> : "Save"}
         </Button>
-      </DialogContent>
-    </Dialog>
+      </DialogWrapper>
   );
 };

@@ -1,11 +1,9 @@
-import Image from "next/image";
 import { Separator } from "../ui/separator";
 import { ServerList } from "./server-list";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { decodeToken } from "@/config/decodeToken";
 import { DB } from "@/lib/prisma";
-import { CustomToltip } from "../custom-component/tooltip";
 import { CreateServer } from "./create-server";
 import { UserHoverCart } from "./user-cart-hover";
 import { LogoAvalibleServer } from "./logo";
